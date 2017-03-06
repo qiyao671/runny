@@ -29,6 +29,8 @@ public class User {
 
     private Integer bestRunId;
 
+    private String signature;
+
     public Integer getId() {
         return id;
     }
@@ -131,5 +133,13 @@ public class User {
 
     public void setBestRunId(Integer bestRunId) {
         this.bestRunId = bestRunId;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 }

@@ -1,5 +1,6 @@
 package com.wyq.study.service;
 
+import com.github.pagehelper.PageInfo;
 import com.wyq.study.pojo.RunnyLog;
 
 /**
@@ -24,4 +25,6 @@ public interface IRunnyLogService {
     RunnyLog getLongestLogInfo(Integer userId);
 
     RunnyLog getFastLogInfo(Integer userId);
+
+    PageInfo listTotalRank(Integer num, Integer pageSize);
 }

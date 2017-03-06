@@ -2,6 +2,8 @@ package com.wyq.study.dao;
 
 import com.wyq.study.pojo.RunnyLog;
 
+import java.util.List;
+
 public interface RunnyLogMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -25,4 +27,6 @@ public interface RunnyLogMapper {
     RunnyLog selectLongestLogInfo(Integer userId);
 
     RunnyLog selectFastLogInfo(Integer userId);
+
+    List<RunnyLog> listTotalRank(RunnyLog runnyLog);
 }

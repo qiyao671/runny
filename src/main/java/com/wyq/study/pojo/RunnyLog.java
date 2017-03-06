@@ -19,9 +19,9 @@ public class RunnyLog {
 
     private String momentContent;
 
+    //非数据库字段
     private Double totalDistance;
 
-    //非数据库字段
     private Double totalSpendTime;
 
     private Double totalCount;

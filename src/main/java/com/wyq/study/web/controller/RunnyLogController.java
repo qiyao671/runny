@@ -1,6 +1,7 @@
 package com.wyq.study.web.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageInfo;
 import com.wyq.study.pojo.Callback;
 import com.wyq.study.pojo.RunnyLog;
 import com.wyq.study.service.IRunnyLogService;
@@ -104,5 +105,25 @@ public class RunnyLogController extends BaseController {
 
         return returnCallback("Success", bestLogInfo);
     }
+
+    /**
+     * 获得总排行
+     * @param token
+     * @param num 1
+     * @param pageSize 10
+     * @return
+     */
+    @RequestMapping(value = "/listTotalRankList", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback listTotalRank(String token, Integer num, Integer pageSize) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback("Error", "您还未登录，请您先登录!");
+        }
+        PageInfo pageInfo = runnyLogService.listTotalRank(num, pageSize);
+        return returnCallback("Success", pageInfo);
+    }
+
+
 
 }

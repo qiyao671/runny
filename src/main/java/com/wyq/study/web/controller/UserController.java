@@ -47,13 +47,52 @@ public class UserController extends BaseController {
         if (user == null) {
             return returnCallback("Error", "请输入用户信息");
         }
+        User userInDB = userService.selectByUserName(user.getUsername());
+        if (userInDB != null) {
+            return returnCallback("Error", "此用户名已存在！");
+        }
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             String encryptedPwd = MD5.getEncryptedPwd(user.getPassword());
             user.setPassword(encryptedPwd);
             userService.insert(user);
             return returnCallback("Success", "用户注册成功!");
         }
+
         return returnCallback("Error", "用户注册失败!");
+    }
+
+    @RequestMapping(value = "/getUserInfo", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback getUserInfo(String token) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback("Error", "您还未登录，请您先登录!");
+        }
+        User userVO = userService.getByUserId(userId);
+        if (userVO != null) {
+            return returnCallback("Success", userVO);
+        }
+
+        return returnCallback("Error", "用户信息获取失败！");
+    }
+
+    @RequestMapping(value = "/update", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback updateUser(User user, String token) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback("Error", "您还未登录，请您先登录!");
+        }
+        if (user == null) {
+            return returnCallback("Error", "请输入用户信息");
+        }
+        String resultMsg = userService.checkUser(user);
+        if (resultMsg != null) {
+            return returnCallback("Error", resultMsg);
+        }
+        userService.updateUser(user);
+
+        return returnCallback("Success", "您的信息修改很成功!");
     }
 
 }

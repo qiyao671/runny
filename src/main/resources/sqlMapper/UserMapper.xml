@@ -15,10 +15,11 @@
     <result column="community_id" property="communityId" jdbcType="INTEGER" />
     <result column="total_run_id" property="totalRunId" jdbcType="INTEGER" />
     <result column="best_run_id" property="bestRunId" jdbcType="INTEGER" />
+    <result column="signature" property="signature" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, username, password, rank, profile, sex, height, weight, birthday, location, community_id, 
-    total_run_id, best_run_id
+    total_run_id, best_run_id, signature
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -41,12 +42,12 @@
       rank, profile, sex, 
       height, weight, birthday, 
       location, community_id, total_run_id, 
-      best_run_id)
+      best_run_id, signature)
     values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{rank,jdbcType=INTEGER}, #{profile,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
       #{height,jdbcType=DOUBLE}, #{weight,jdbcType=DOUBLE}, #{birthday,jdbcType=TIMESTAMP}, 
       #{location,jdbcType=VARCHAR}, #{communityId,jdbcType=INTEGER}, #{totalRunId,jdbcType=INTEGER}, 
-      #{bestRunId,jdbcType=INTEGER})
+      #{bestRunId,jdbcType=INTEGER}, #{signature,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.wyq.study.pojo.User" >
     insert into user
@@ -90,6 +91,9 @@
       <if test="bestRunId != null" >
         best_run_id,
       </if>
+      <if test="signature != null" >
+        signature,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -130,6 +134,9 @@
       </if>
       <if test="bestRunId != null" >
         #{bestRunId,jdbcType=INTEGER},
+      </if>
+      <if test="signature != null" >
+        #{signature,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -172,6 +179,9 @@
       <if test="bestRunId != null" >
         best_run_id = #{bestRunId,jdbcType=INTEGER},
       </if>
+      <if test="signature != null" >
+        signature = #{signature,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -188,7 +198,8 @@
       location = #{location,jdbcType=VARCHAR},
       community_id = #{communityId,jdbcType=INTEGER},
       total_run_id = #{totalRunId,jdbcType=INTEGER},
-      best_run_id = #{bestRunId,jdbcType=INTEGER}
+      best_run_id = #{bestRunId,jdbcType=INTEGER},
+      signature = #{signature,jdbcType=VARCHAR},
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

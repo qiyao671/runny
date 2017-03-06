@@ -9,6 +9,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * ${DESCRIPTION}
@@ -32,7 +33,7 @@ public class RunnyLogMapperTest {
     }
 
     @Test
-    public void selectTotalLogInfo() throws Exception {
+    public void selectTotalLogInfoTest() throws Exception {
         System.out.println(AppSessionHelper.getUserSession(1));
 
         Integer userId = 1;
@@ -41,7 +42,7 @@ public class RunnyLogMapperTest {
     }
 
     @Test
-    public void selectPersonalLogInfo() throws Exception {
+    public void selectPersonalLogInfoTest() throws Exception {
 
         Integer userId = 1;
         Double maxDistance = 10.0d;
@@ -52,6 +53,14 @@ public class RunnyLogMapperTest {
         RunnyLog runnylogVO = runnyLogMapper.selectPersonalLogInfo(runnyLog);
 
     }
+
+    @Test
+    public void listTotalRankTest() throws Exception {
+        RunnyLog runnyLog = new RunnyLog();
+        List<RunnyLog> runnyLogs = runnyLogMapper.listTotalRank(runnyLog);
+    }
+
+
 
 
 

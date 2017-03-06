@@ -1,5 +1,7 @@
 package com.wyq.study.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.wyq.study.dao.RunnyLogMapper;
 import com.wyq.study.pojo.RunnyLog;
 import com.wyq.study.service.IRunnyLogService;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 模块名称：study
@@ -55,12 +58,21 @@ public class RunnyLogServiceImpl implements IRunnyLogService {
     public RunnyLog getFastLogInfo(Integer userId) {
         RunnyLog logInfo = runnyLogMapper.selectFastLogInfo(userId);
         Double fastSpeed = 0.0;
-        if (logInfo!=null) {
+        if (logInfo != null) {
             BigDecimal distance = new BigDecimal(Double.valueOf(logInfo.getDistance()));
             BigDecimal spendTime = new BigDecimal(Double.valueOf(logInfo.getSpendTime()));
             fastSpeed = distance.divide(spendTime, 2).doubleValue();
         }
         logInfo.setFastSpend(fastSpeed);
         return logInfo;
+    }
+
+    @Override
+    public PageInfo listTotalRank(Integer num, Integer pageSize) {
+        RunnyLog runnyLog = new RunnyLog();
+        List<RunnyLog> totalRankList = runnyLogMapper.listTotalRank(runnyLog);
+        PageHelper.startPage(num, pageSize);
+        PageInfo pageInfo = new PageInfo(totalRankList);
+        return pageInfo;
     }
 }

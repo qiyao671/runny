@@ -9,4 +9,10 @@ public interface IUserService {
     int insert(User user);
 
     User selectByUserName(String userName);
+
+    void updateUser(User user);
+
+    String checkUser(User user);
+
+    User getByUserId(Integer userId);
 }
