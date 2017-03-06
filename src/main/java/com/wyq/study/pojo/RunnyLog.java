@@ -32,6 +32,8 @@ public class RunnyLog {
 
     private Double minDistance;
 
+    private Double fastSpend;
+
     public Integer getId() {
         return id;
     }
@@ -142,5 +144,13 @@ public class RunnyLog {
 
     public void setMinDistance(Double minDistance) {
         this.minDistance = minDistance;
+    }
+
+    public Double getFastSpend() {
+        return fastSpend;
+    }
+
+    public void setFastSpend(Double fastSpend) {
+        this.fastSpend = fastSpend;
     }
 }

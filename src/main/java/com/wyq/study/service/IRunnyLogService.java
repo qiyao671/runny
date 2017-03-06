@@ -22,4 +22,6 @@ public interface IRunnyLogService {
     RunnyLog getFarthestLogInfo(Integer userId);
 
     RunnyLog getLongestLogInfo(Integer userId);
+
+    RunnyLog getFastLogInfo(Integer userId);
 }

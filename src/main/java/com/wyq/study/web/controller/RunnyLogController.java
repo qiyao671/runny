@@ -58,47 +58,51 @@ public class RunnyLogController extends BaseController {
     }
 
     /**
-     * 个人跑步记录
+     * 最佳个人跑步记录
      *
      * @param token
      * @return
      */
-    @RequestMapping(value = "/getPersonRunningLogInfo", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/getBestRunningLogInfo", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback getPersonRunningLogInfo(String token) {
+    public Callback getBestRunningLogInfo(String token) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback("Error", "您还未登录，请您先登录!");
         }
-        JSONObject PersonalLogInfo = new JSONObject();
+        JSONObject bestLogInfo = new JSONObject();
         RunnyLog runnyLog = new RunnyLog();
         runnyLog.setUserId(userId);
         //五公里最快
         runnyLog.setMinDistance(FIVE_KM);
         runnyLog.setMaxDistance(TEN_KM);
         RunnyLog fiveRunlogVO = runnyLogService.getPersonalLogInfo(runnyLog);
-        PersonalLogInfo.put("fivePB", fiveRunlogVO);
+        bestLogInfo.put("fivePB", fiveRunlogVO);
         //十公里最快
         runnyLog.setMinDistance(TEN_KM);
         runnyLog.setMaxDistance(HALF_MA);
         RunnyLog tenRunlogVO = runnyLogService.getPersonalLogInfo(runnyLog);
-        PersonalLogInfo.put("tenPB", tenRunlogVO);
+        bestLogInfo.put("tenPB", tenRunlogVO);
         //半马最快
         runnyLog.setMinDistance(HALF_MA);
         runnyLog.setMaxDistance(FULL_MA);
         RunnyLog halfMaRunlogVO = runnyLogService.getPersonalLogInfo(runnyLog);
-        PersonalLogInfo.put("halfMaPB", halfMaRunlogVO);
+        bestLogInfo.put("halfMaPB", halfMaRunlogVO);
         //全马最快
         runnyLog.setMinDistance(FULL_MA);
         RunnyLog fullMaRunlogVO = runnyLogService.getPersonalLogInfo(runnyLog);
-        PersonalLogInfo.put("fullMaPB", fullMaRunlogVO);
-        //最长距离
+        bestLogInfo.put("fullMaPB", fullMaRunlogVO);
+        //最远距离
         RunnyLog farthestRunLogVO = runnyLogService.getFarthestLogInfo(userId);
-        PersonalLogInfo.put("farthestLogInfo", farthestRunLogVO);
+        bestLogInfo.put("farthestLogInfo", farthestRunLogVO);
         //最长时间
         RunnyLog longestRunLogVO = runnyLogService.getLongestLogInfo(userId);
-        PersonalLogInfo.put("longestRunLogVO", longestRunLogVO);
-        return returnCallback("Success", PersonalLogInfo);
+        bestLogInfo.put("longestRunLogVO", longestRunLogVO);
+        //最快速度
+        RunnyLog fastRunLogVO = runnyLogService.getFastLogInfo(userId);
+        bestLogInfo.put("fastSpeed", fastRunLogVO);
+
+        return returnCallback("Success", bestLogInfo);
     }
 
 }

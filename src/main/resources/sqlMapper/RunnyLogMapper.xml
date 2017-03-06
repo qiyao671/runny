@@ -51,6 +51,12 @@
         from runny_log
         order by spend_time DESC limit 0,1;
     </select>
+    <select id="selectFastLogInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from runny_log
+        order by (distance/spend_time)  DESC limit 0,1;
+    </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from runny_log
     where id = #{id,jdbcType=INTEGER}

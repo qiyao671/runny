@@ -6,6 +6,7 @@ import com.wyq.study.service.IRunnyLogService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 /**
  * 模块名称：study
@@ -40,13 +41,26 @@ public class RunnyLogServiceImpl implements IRunnyLogService {
 
     @Override
     public RunnyLog getFarthestLogInfo(Integer userId) {
-            RunnyLog logInfo = runnyLogMapper.selectFarthestLogInfo(userId);
+        RunnyLog logInfo = runnyLogMapper.selectFarthestLogInfo(userId);
         return logInfo;
     }
 
     @Override
     public RunnyLog getLongestLogInfo(Integer userId) {
         RunnyLog logInfo = runnyLogMapper.selectLongestLogInfo(userId);
+        return logInfo;
+    }
+
+    @Override
+    public RunnyLog getFastLogInfo(Integer userId) {
+        RunnyLog logInfo = runnyLogMapper.selectFastLogInfo(userId);
+        Double fastSpeed = 0.0;
+        if (logInfo!=null) {
+            BigDecimal distance = new BigDecimal(Double.valueOf(logInfo.getDistance()));
+            BigDecimal spendTime = new BigDecimal(Double.valueOf(logInfo.getSpendTime()));
+            fastSpeed = distance.divide(spendTime, 2).doubleValue();
+        }
+        logInfo.setFastSpend(fastSpeed);
         return logInfo;
     }
 }
