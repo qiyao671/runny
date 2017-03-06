@@ -23,7 +23,8 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User selectByUserName(String userName) {
-        return null;
+        User user = userMapper.selectByUserName(userName);
+        return user;
     }
 
 }

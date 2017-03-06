@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wyq.study.dao.RunnyLogMapper">
+    <resultMap id="BaseResultMap" type="com.wyq.study.pojo.RunnyLog">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="distance" property="distance" jdbcType="DOUBLE"/>
+        <result column="spend_time" property="spendTime" jdbcType="DOUBLE"/>
+        <result column="energy" property="energy" jdbcType="DOUBLE"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="picture" property="picture" jdbcType="VARCHAR"/>
+        <result column="moment_content" property="momentContent" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_id, distance, spend_time, energy, create_time, picture, moment_content
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from runny_log
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectTotalLogInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    SELECT sum(distance) as totalDistance,sum(spend_time) as totalSpendTime,sum(energy) as totalEnergy,count(id) as totalCount
+    from runny_log
+    where user_id = #{userId,jdbcType=INTEGER};
+  </select>
+    <select id="selectPersonalLogInfo" resultMap="BaseResultMap" parameterType="com.wyq.study.pojo.RunnyLog">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from runny_log
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <!--<if test="maxDistance != null and maxDistance!=''">-->
+            AND distance <![CDATA[<]]>= #{maxDistance,jdbcType=DOUBLE}
+            <!--</if>-->
+            <if test="minDistance != null and minDistance!=''">
+                AND distance >= #{minDistance,jdbcType=DOUBLE}
+            </if>
+        </trim>
+        order by spend_time ASC limit 0,1;
+    </select>
+    <select id="selectFarthestLogInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from runny_log
+        order by distance DESC limit 0,1;
+    </select>
+    <select id="selectLongestLogInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from runny_log
+        order by spend_time DESC limit 0,1;
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from runny_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wyq.study.pojo.RunnyLog">
+    insert into runny_log (id, user_id, distance, 
+      spend_time, energy, create_time, 
+      picture, moment_content)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{distance,jdbcType=DOUBLE}, 
+      #{spendTime,jdbcType=DOUBLE}, #{energy,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{picture,jdbcType=VARCHAR}, #{momentContent,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.wyq.study.pojo.RunnyLog">
+        insert into runny_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="distance != null">
+                distance,
+            </if>
+            <if test="spendTime != null">
+                spend_time,
+            </if>
+            <if test="energy != null">
+                energy,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="picture != null">
+                picture,
+            </if>
+            <if test="momentContent != null">
+                moment_content,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="distance != null">
+                #{distance,jdbcType=DOUBLE},
+            </if>
+            <if test="spendTime != null">
+                #{spendTime,jdbcType=DOUBLE},
+            </if>
+            <if test="energy != null">
+                #{energy,jdbcType=DOUBLE},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="picture != null">
+                #{picture,jdbcType=VARCHAR},
+            </if>
+            <if test="momentContent != null">
+                #{momentContent,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wyq.study.pojo.RunnyLog">
+        update runny_log
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="distance != null">
+                distance = #{distance,jdbcType=DOUBLE},
+            </if>
+            <if test="spendTime != null">
+                spend_time = #{spendTime,jdbcType=DOUBLE},
+            </if>
+            <if test="energy != null">
+                energy = #{energy,jdbcType=DOUBLE},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="picture != null">
+                picture = #{picture,jdbcType=VARCHAR},
+            </if>
+            <if test="momentContent != null">
+                moment_content = #{momentContent,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wyq.study.pojo.RunnyLog">
+    update runny_log
+    set user_id = #{userId,jdbcType=INTEGER},
+      distance = #{distance,jdbcType=DOUBLE},
+      spend_time = #{spendTime,jdbcType=DOUBLE},
+      energy = #{energy,jdbcType=DOUBLE},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      picture = #{picture,jdbcType=VARCHAR},
+      moment_content = #{momentContent,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
