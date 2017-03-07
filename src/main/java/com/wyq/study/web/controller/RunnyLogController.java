@@ -24,10 +24,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/log")
 public class RunnyLogController extends BaseController {
-    private static final Double FIVE_KM = 5.0d;
-    private static final Double TEN_KM = 10.0d;
-    private static final Double HALF_MA = 21.09d;
-    private static final Double FULL_MA = 42.09d;
+    private static final double FIVE_KM = 5.0d;
+    private static final double TEN_KM = 10.0d;
+    private static final double HALF_MA = 21.09d;
+    private static final double FULL_MA = 42.09d;
 
     @Autowired
     private IRunnyLogService runnyLogService;
