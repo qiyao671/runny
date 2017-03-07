@@ -66,8 +66,7 @@ public class MD5 {
      * @throws NoSuchAlgorithmException
      * @throws UnsupportedEncodingException
      */
-    public static boolean validPassword(String password, String passwordInDb)
-            throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public static boolean validPassword(String password, String passwordInDb) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         //将16进制字符串格式口令转换成字节数组
         byte[] pwdInDb = hexStringToByte(passwordInDb);
         //声明盐变量
@@ -138,11 +137,10 @@ public class MD5 {
     }
 
 
-
     private String rhex(int num) {
         String str = "";
 
-        for(int j = 0; j <= 3; ++j) {
+        for (int j = 0; j <= 3; ++j) {
             str = str + this.hex_chr.charAt(num >> j * 8 + 4 & 15) + this.hex_chr.charAt(num >> j * 8 & 15);
         }
 
@@ -155,11 +153,11 @@ public class MD5 {
         boolean i = false;
 
         int var5;
-        for(var5 = 0; var5 < nblk * 16; ++var5) {
+        for (var5 = 0; var5 < nblk * 16; ++var5) {
             blks[var5] = 0;
         }
 
-        for(var5 = 0; var5 < str.length(); ++var5) {
+        for (var5 = 0; var5 < str.length(); ++var5) {
             blks[var5 >> 2] |= str.charAt(var5) << var5 % 4 * 8;
         }
 
@@ -208,7 +206,7 @@ public class MD5 {
         int c = -1732584194;
         int d = 271733878;
 
-        for(int i = 0; i < x.length; i += 16) {
+        for (int i = 0; i < x.length; i += 16) {
             int olda = a;
             int oldb = b;
             int oldc = c;
