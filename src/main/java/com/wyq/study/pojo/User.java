@@ -31,6 +31,8 @@ public class User {
 
     private String signature;
 
+    private Integer age;
+
     public Integer getId() {
         return id;
     }
@@ -141,5 +143,13 @@ public class User {
 
     public void setSignature(String signature) {
         this.signature = signature;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 }
