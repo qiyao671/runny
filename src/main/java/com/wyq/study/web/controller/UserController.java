@@ -5,6 +5,7 @@ import com.wyq.study.pojo.User;
 import com.wyq.study.service.IUserService;
 import com.wyq.study.utils.AppSessionHelper;
 import com.wyq.study.utils.MD5;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +24,13 @@ public class UserController extends BaseController {
     @Resource
     private IUserService userService;
 
+    /**
+     *
+     * @param user
+     * @return
+     * @throws UnsupportedEncodingException
+     * @throws NoSuchAlgorithmException
+     */
     @RequestMapping(value = "/login", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public Callback login(User user) throws UnsupportedEncodingException, NoSuchAlgorithmException {
@@ -34,9 +42,15 @@ public class UserController extends BaseController {
         if (userInDB == null) {
             return returnCallback("Error", "此用户不存在,请重新输入...");
         }
-        if (MD5.validPassword(user.getPassword(), userInDB.getPassword())) {
-            String token = AppSessionHelper.getUserSession(userInDB.getId());
-            return returnCallback("Success", token);
+        try {
+            if (MD5.validPassword(user.getPassword(), userInDB.getPassword())) {
+                String token = AppSessionHelper.getUserSession(userInDB.getId());
+                return returnCallback("Success", token);
+            }
+        } catch (NoSuchAlgorithmException e) {
+            return returnCallback("Error", "用户密码不正确,请重新输入");
+        } catch (UnsupportedEncodingException e) {
+            return returnCallback("Error", "用户密码不正确,请重新输入");
         }
         return returnCallback("Error", "用户密码不正确,请重新输入");
     }
@@ -44,7 +58,7 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/add", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public Callback addUser(User user) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        if (user == null) {
+        if (user == null || StringUtils.isEmpty(user.getUsername())) {
             return returnCallback("Error", "请输入用户信息");
         }
         User userInDB = userService.selectByUserName(user.getUsername());

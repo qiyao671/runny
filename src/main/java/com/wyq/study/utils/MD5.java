@@ -72,7 +72,12 @@ public class MD5 {
         //声明盐变量
         byte[] salt = new byte[SALT_LENGTH];
         //将盐从数据库中保存的口令字节数组中提取出来
-        System.arraycopy(pwdInDb, 0, salt, 0, SALT_LENGTH);
+        try {
+            System.arraycopy(pwdInDb, 0, salt, 0, SALT_LENGTH);
+        } catch (Exception e) {
+            return false;
+        }
+
         //创建消息摘要对象
         MessageDigest md = MessageDigest.getInstance("MD5");
         //将盐数据传入消息摘要对象
@@ -84,7 +89,12 @@ public class MD5 {
         //声明一个保存数据库中口令消息摘要的变量
         byte[] digestInDb = new byte[pwdInDb.length - SALT_LENGTH];
         //取得数据库中口令的消息摘要
-        System.arraycopy(pwdInDb, SALT_LENGTH, digestInDb, 0, digestInDb.length);
+        try {
+            System.arraycopy(pwdInDb, SALT_LENGTH, digestInDb, 0, digestInDb.length);
+        } catch (Exception e) {
+            return false;
+        }
+
         //比较根据输入口令生成的消息摘要和数据库中消息摘要是否相同
         if (Arrays.equals(digest, digestInDb)) {
             //口令正确返回口令匹配消息
@@ -93,6 +103,7 @@ public class MD5 {
             //口令不正确返回口令不匹配消息
             return false;
         }
+
     }
 
 
