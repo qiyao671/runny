@@ -5,10 +5,12 @@ import com.github.pagehelper.PageInfo;
 import com.wyq.study.dao.RunnyLogMapper;
 import com.wyq.study.pojo.RunnyLog;
 import com.wyq.study.service.IRunnyLogService;
+import com.wyq.study.utils.DateUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -71,8 +73,31 @@ public class RunnyLogServiceImpl implements IRunnyLogService {
     public PageInfo listTotalRank(Integer num, Integer pageSize) {
         RunnyLog runnyLog = new RunnyLog();
         List<RunnyLog> totalRankList = runnyLogMapper.listTotalRank(runnyLog);
+        if (totalRankList == null || totalRankList.size() == 0) {
+            return null;
+        }
         PageHelper.startPage(num, pageSize);
         PageInfo pageInfo = new PageInfo(totalRankList);
         return pageInfo;
+    }
+
+    @Override
+    public PageInfo listTimeRank(Integer num, Integer pageSize, Date startTime, Date endTime) {
+        RunnyLog runnyLogDTO = new RunnyLog();
+        runnyLogDTO.setBeginTime(startTime);
+        runnyLogDTO.setEndTime(endTime);
+        List<RunnyLog> timeRankList = runnyLogMapper.listTimeRank(runnyLogDTO);
+        if (timeRankList == null || timeRankList.size() == 0) {
+            return null;
+        }
+        PageHelper.startPage(num, pageSize);
+        PageInfo pageInfo = new PageInfo(timeRankList);
+        return pageInfo;
+    }
+
+    public static void main(String args[]) {
+        Date now = new Date();
+        Date dateTime = DateUtils.weekEndTime(now);
+        System.out.println(dateTime);
     }
 }

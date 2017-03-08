@@ -6,11 +6,15 @@ import com.wyq.study.pojo.Callback;
 import com.wyq.study.pojo.RunnyLog;
 import com.wyq.study.service.IRunnyLogService;
 import com.wyq.study.utils.AppSessionHelper;
+import com.wyq.study.utils.DateUtils;
+import com.xiaoleilu.hutool.date.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Date;
 
 /**
  * 跑步记录
@@ -108,12 +112,13 @@ public class RunnyLogController extends BaseController {
 
     /**
      * 获得总排行
+     *
      * @param token
-     * @param num 1
+     * @param num      1
      * @param pageSize 10
      * @return
      */
-    @RequestMapping(value = "/listTotalRankList", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/listTotalRank", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public Callback listTotalRank(String token, Integer num, Integer pageSize) {
         Integer userId = AppSessionHelper.getAppUserId(token);
@@ -124,6 +129,70 @@ public class RunnyLogController extends BaseController {
         return returnCallback("Success", pageInfo);
     }
 
+    /**
+     * 本月好友榜单
+     *
+     * @param token
+     * @param num
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/listMonthRank", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback listMonthRank(String token, Integer num, Integer pageSize) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback("Error", "您还未登录，请您先登录!");
+        }
+        Date beginMonth = DateUtils.monthStartTime(new Date());
+        Date endMonth = DateUtils.monthEndTime(new Date());
+        PageInfo pageInfo = runnyLogService.listTimeRank(num, pageSize, beginMonth, endMonth);
+        return returnCallback("Success", pageInfo);
+    }
+
+    /**
+     * 本周好友榜单
+     *
+     * @param token
+     * @param num
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/listWeekRank", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback listWeekRank(String token, Integer num, Integer pageSize) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback("Error", "您还未登录，请您先登录!");
+        }
+        Date beginWeek = DateUtils.weekStartTime(new Date());
+        Date endWeek = DateUtils.weekEndTime(new Date());
+        PageInfo pageInfo = runnyLogService.listTimeRank(num, pageSize, beginWeek, endWeek);
+
+        return returnCallback("Success", pageInfo);
+    }
+
+    /**
+     * 今日好友榜单
+     *
+     * @param token
+     * @param num
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/listDayRank", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback listDayRank(String token, Integer num, Integer pageSize) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback("Error", "您还未登录，请您先登录!");
+        }
+        Date beginDay = DateUtil.beginOfDay(new Date());
+        Date endDay = DateUtil.endOfDay(new Date());
+        PageInfo pageInfo = runnyLogService.listTimeRank(num, pageSize, beginDay, endDay);
+
+        return returnCallback("Success", pageInfo);
+    }
 
 
 }

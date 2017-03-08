@@ -3,6 +3,8 @@ package com.wyq.study.service;
 import com.github.pagehelper.PageInfo;
 import com.wyq.study.pojo.RunnyLog;
 
+import java.util.Date;
+
 /**
  * ${DESCRIPTION}
  * 模块名称：study
@@ -27,4 +29,6 @@ public interface IRunnyLogService {
     RunnyLog getFastLogInfo(Integer userId);
 
     PageInfo listTotalRank(Integer num, Integer pageSize);
+
+    PageInfo listTimeRank(Integer num, Integer pageSize, Date startTime, Date endTime);
 }

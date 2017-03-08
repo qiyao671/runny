@@ -37,31 +37,40 @@
                 AND distance >= #{minDistance,jdbcType=DOUBLE}
             </if>
         </trim>
-        order by spend_time ASC limit 0,1;
+        order by spend_time ASC;
     </select>
     <select id="selectFarthestLogInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         SELECT
         <include refid="Base_Column_List"/>
         from runny_log
-        order by distance DESC limit 0,1;
+        order by distance DESC;
     </select>
     <select id="selectLongestLogInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         SELECT
         <include refid="Base_Column_List"/>
         from runny_log
-        order by spend_time DESC limit 0,1;
+        order by spend_time DESC;
     </select>
     <select id="selectFastLogInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         SELECT
         <include refid="Base_Column_List"/>
         from runny_log
-        order by (distance/spend_time) DESC limit 0,1;
+        order by (distance/spend_time) DESC ;
     </select>
     <select id="listTotalRank" resultMap="BaseResultMap" parameterType="com.wyq.study.pojo.RunnyLog">
         SELECT
-        id, user_id, distance, spend_time, energy, create_time, picture, moment_content, sum(distance) as totalDistance,sum(spend_time) as totalSpendTime,sum(energy) as totalEnergy,count(id) as totalCount
+        user_id, sum(distance) as totalDistance,sum(spend_time) as totalSpendTime,sum(energy) as totalEnergy,count(id) as totalCount
         from runny_log
-        order by sum(distance) DESC limit 0,1;
+        group by user_id
+        order by totalDistance DESC;
+    </select>
+    <select id="listTimeRank" resultMap="BaseResultMap" parameterType="com.wyq.study.pojo.RunnyLog">
+        SELECT
+        user_id, sum(distance) as totalDistance,sum(spend_time) as totalSpendTime,sum(energy) as totalEnergy,count(id) as totalCount
+        from runny_log
+        where create_time BETWEEN #{beginTime,jdbcType=TIMESTAMP} AND #{endTime,jdbcType=TIMESTAMP}
+        group by user_id
+        order by totalDistance DESC;
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from runny_log
