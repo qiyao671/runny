@@ -1,17 +1,17 @@
-<div class="footer">
-    <div class="footer-inner">
-        <div  class="footer-content">
-						<span class="bigger-120">
-							© 2015 <a href="http://www.olymtech.com">Olymtech</a>.All rights reserved.
-						</span>
-        </div>
-    </div>
-</div>
-
-<a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
-    <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
-</a>
-</div><!-- /.main-container -->
+##<div class="footer">
+##    <div class="footer-inner">
+##        <div  class="footer-content">
+##						<span class="bigger-120">
+##							© 2015 <a href="http://www.olymtech.com">Olymtech</a>.All rights reserved.
+##						</span>
+##        </div>
+##    </div>
+##</div>
+##
+##<a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+##    <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+##</a>
+##</div><!-- /.main-container -->
 
 <!-- inline scripts related to this page -->
 ##<script type="text/javascript">

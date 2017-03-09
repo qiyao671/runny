@@ -12,7 +12,7 @@ public class IndexController extends BaseController {
 
     @RequestMapping(value = {"/", "/index.htm"}, method = {RequestMethod.POST, RequestMethod.GET})
     public String index(Model model) {
-        return "login";
+        return "index";
     }
 
 }

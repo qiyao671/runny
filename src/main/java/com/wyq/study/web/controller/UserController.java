@@ -25,7 +25,6 @@ public class UserController extends BaseController {
     private IUserService userService;
 
     /**
-     *
      * @param user
      * @return
      * @throws UnsupportedEncodingException
@@ -68,8 +67,9 @@ public class UserController extends BaseController {
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             String encryptedPwd = MD5.getEncryptedPwd(user.getPassword());
             user.setPassword(encryptedPwd);
-            userService.insert(user);
-            return returnCallback("Success", "用户注册成功!");
+            Integer userId = userService.insert(user);
+            String token = AppSessionHelper.getUserSession(userId);
+            return returnCallback("Success", token);
         }
 
         return returnCallback("Error", "用户注册失败!");
