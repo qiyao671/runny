@@ -155,7 +155,7 @@ public class UserController extends BaseController {
             return returnCallback("Error", "您还未登录，请您先登录!");
         }
         PageInfo pageInfo = userService.listFriends(userId, num, pageSize);
-        return returnCallback("success", pageInfo);
+        return returnCallback("Success", pageInfo);
     }
 
     /**
@@ -184,7 +184,7 @@ public class UserController extends BaseController {
         friend.setFriendId(friendUserId);
         friend.setCreateTime(new Date());
         friendService.saveFriend(friend);
-        return returnCallback("success", "添加好友成功！");
+        return returnCallback("Success", "添加好友成功！");
     }
 
     /**
