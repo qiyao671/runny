@@ -1,5 +1,6 @@
 package com.wyq.study.service.impl;
 
+import com.wyq.study.dao.UserMapper;
 import com.wyq.study.pojo.User;
 import com.wyq.study.service.IUserService;
 import org.junit.Test;
@@ -10,6 +11,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by wangyiqiang on 2017/2/28.
@@ -20,6 +22,10 @@ import java.util.Date;
 public class UserServiceImplTest {
     @Resource
     private IUserService userService;
+
+    @Resource
+    private UserMapper userMapper;
+
     @Test
     public void insert() throws Exception {
         User user = new User();
@@ -39,4 +45,12 @@ public class UserServiceImplTest {
         userService.insert(user);
     }
 
+
+    @Test
+    public void listUsersByUserNameLikeTest() throws Exception {
+//        User user = userService.selectByUserName("xiaohong");
+        User userDO = new User();
+        userDO.setUsername("xiao");
+        List<User> userList = userMapper.listUsersByUserNameLike(userDO);
+    }
 }

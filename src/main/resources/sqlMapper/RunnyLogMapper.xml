@@ -62,7 +62,7 @@
         user_id, sum(distance) as totalDistance,sum(spend_time) as totalSpendTime,sum(energy) as totalEnergy,count(id) as totalCount
         from runny_log
         group by user_id
-        order by totalDistance DESC;
+        order by totalDistance DESC
     </select>
     <select id="listTimeRank" resultMap="BaseResultMap" parameterType="com.wyq.study.pojo.RunnyLog">
         SELECT
@@ -70,7 +70,7 @@
         from runny_log
         where create_time BETWEEN #{beginTime,jdbcType=TIMESTAMP} AND #{endTime,jdbcType=TIMESTAMP}
         group by user_id
-        order by totalDistance DESC;
+        order by totalDistance DESC
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from runny_log

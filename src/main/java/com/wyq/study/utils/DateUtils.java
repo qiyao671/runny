@@ -19,7 +19,7 @@ public class DateUtils {
      * 根据一个时间格式字符串串，返回一个字符串
      *
      * @param format 时间字符串
-     * @param date  要格式化的时间数据
+     * @param date   要格式化的时间数据
      */
     public static final String format(String format, Date date) {
         SimpleDateFormat df = null;
@@ -76,6 +76,7 @@ public class DateUtils {
 
     /**
      * 获取本月结束时间
+     *
      * @param date
      * @return
      */
@@ -111,6 +112,7 @@ public class DateUtils {
 
     /**
      * 获取本周结束时间
+     *
      * @param date
      * @return
      */
@@ -125,5 +127,40 @@ public class DateUtils {
         cal.set(Calendar.SECOND, 59);
         cal.set(Calendar.MILLISECOND, 997);
         return cal.getTime();
+    }
+
+    /**
+     * 由出生日期获得年龄
+     *
+     * @param birthDay
+     * @return
+     * @throws Exception
+     */
+    public static int getAge(Date birthDay) throws Exception {
+        Calendar cal = Calendar.getInstance();
+
+        if (cal.before(birthDay)) {
+            throw new IllegalArgumentException(
+                    "The birthDay is before Now.It's unbelievable!");
+        }
+        int yearNow = cal.get(Calendar.YEAR);
+        int monthNow = cal.get(Calendar.MONTH);
+        int dayOfMonthNow = cal.get(Calendar.DAY_OF_MONTH);
+        cal.setTime(birthDay);
+
+        int yearBirth = cal.get(Calendar.YEAR);
+        int monthBirth = cal.get(Calendar.MONTH);
+        int dayOfMonthBirth = cal.get(Calendar.DAY_OF_MONTH);
+
+        int age = yearNow - yearBirth;
+
+        if (monthNow <= monthBirth) {
+            if (monthNow == monthBirth) {
+                if (dayOfMonthNow < dayOfMonthBirth) age--;
+            } else {
+                age--;
+            }
+        }
+        return age;
     }
 }

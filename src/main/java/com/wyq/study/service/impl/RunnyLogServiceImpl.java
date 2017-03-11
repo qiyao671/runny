@@ -6,6 +6,7 @@ import com.wyq.study.dao.RunnyLogMapper;
 import com.wyq.study.pojo.RunnyLog;
 import com.wyq.study.service.IRunnyLogService;
 import com.wyq.study.utils.DateUtils;
+import com.xiaoleilu.hutool.date.DateUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -71,18 +72,19 @@ public class RunnyLogServiceImpl implements IRunnyLogService {
 
     @Override
     public PageInfo listTotalRank(Integer num, Integer pageSize) {
+        PageHelper.startPage(num, pageSize);
         RunnyLog runnyLog = new RunnyLog();
         List<RunnyLog> totalRankList = runnyLogMapper.listTotalRank(runnyLog);
         if (totalRankList == null || totalRankList.size() == 0) {
             return null;
         }
-        PageHelper.startPage(num, pageSize);
         PageInfo pageInfo = new PageInfo(totalRankList);
         return pageInfo;
     }
 
     @Override
     public PageInfo listTimeRank(Integer num, Integer pageSize, Date startTime, Date endTime) {
+        PageHelper.startPage(num, pageSize);
         RunnyLog runnyLogDTO = new RunnyLog();
         runnyLogDTO.setBeginTime(startTime);
         runnyLogDTO.setEndTime(endTime);
@@ -90,14 +92,18 @@ public class RunnyLogServiceImpl implements IRunnyLogService {
         if (timeRankList == null || timeRankList.size() == 0) {
             return null;
         }
-        PageHelper.startPage(num, pageSize);
         PageInfo pageInfo = new PageInfo(timeRankList);
         return pageInfo;
     }
 
     public static void main(String args[]) {
         Date now = new Date();
-        Date dateTime = DateUtils.weekEndTime(now);
-        System.out.println(dateTime);
+        int age = 0;
+        try {
+            age = DateUtils.getAge(DateUtil.offsiteMonth(now, 1));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println(age);
     }
 }

@@ -2,6 +2,8 @@ package com.wyq.study.dao;
 
 import com.wyq.study.pojo.User;
 
+import java.util.List;
+
 public interface UserMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -16,4 +18,10 @@ public interface UserMapper {
     int updateByPrimaryKey(User record);
 
     User selectByUserName(String username);
+
+    List<User> listFriendsByUserId(Integer userId);
+
+
+    List<User> listUsersByUserNameLike(User user);
+
 }

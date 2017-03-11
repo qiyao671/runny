@@ -1,5 +1,7 @@
 package com.wyq.study.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.wyq.study.dao.UserMapper;
 import com.wyq.study.pojo.User;
 import com.wyq.study.service.IUserService;
@@ -7,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Created by wangyiqiang on 16/6/1.
@@ -33,8 +36,10 @@ public class UserServiceImpl implements IUserService {
     public void updateUser(User user) {
         userMapper.updateByPrimaryKeySelective(user);
     }
+
     /**
      * 用户信息校验
+     *
      * @param user
      * @return
      */
@@ -57,8 +62,20 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User getByUserId(Integer userId) {
-        User user = userMapper.selectByPrimaryKey(userId);
-        return user;
+        return userMapper.selectByPrimaryKey(userId);
+    }
+
+    @Override
+    public PageInfo listFriends(Integer userId, Integer num, Integer pageSize) {
+        PageHelper.startPage(num, pageSize);
+        List<User> userList = userMapper.listFriendsByUserId(userId);
+        PageInfo pageInfo = new PageInfo(userList);
+        return pageInfo;
+    }
+
+    @Override
+    public List<User> listUsersByUserNameLike(User user) {
+         return userMapper.listUsersByUserNameLike(user);
     }
 
 }

@@ -19,7 +19,7 @@ public class RunnyLog {
 
     private String momentContent;
 
-    //非数据库字段
+    /*非数据库字段*/
     private Double totalDistance;
 
     private Double totalSpendTime;
