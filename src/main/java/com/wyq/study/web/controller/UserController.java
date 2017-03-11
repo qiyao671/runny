@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -158,7 +159,7 @@ public class UserController extends BaseController {
     }
 
     /**
-     * 添加好友
+     * 关注(添加)好友
      *
      * @param token
      * @param friendUserId
@@ -181,8 +182,34 @@ public class UserController extends BaseController {
         Friend friend = new Friend();
         friend.setUserId(userId);
         friend.setFriendId(friendUserId);
+        friend.setCreateTime(new Date());
         friendService.saveFriend(friend);
         return returnCallback("success", "添加好友成功！");
+    }
+
+    /**
+     * 取消关注(删除)好友
+     *
+     * @param token
+     * @param friendUserId
+     * @return
+     */
+    @RequestMapping(value = "/deleteFriend", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback deleteFriend(String token, Integer friendUserId) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback("Error", "您还未登录，请您先登录!");
+        }
+        if (friendUserId == null) {
+            return returnCallback("Error", "请先选择您要删除的好友!");
+        }
+        User friendUser = userService.getByUserId(friendUserId);
+        if (friendUser == null) {
+            return returnCallback("Error", "找不到您要删除的好友！");
+        }
+        friendService.deleteFriend(userId, friendUserId);
+        return returnCallback("Success", "添加好友成功！");
     }
 
 
@@ -209,7 +236,7 @@ public class UserController extends BaseController {
         if (userVOList == null || userVOList.size() == 0) {
             return returnCallback("Error", "没有搜索到对应的结果!");
         }
-        return returnCallback("success", userVOList);
+        return returnCallback("Success", userVOList);
     }
 
 

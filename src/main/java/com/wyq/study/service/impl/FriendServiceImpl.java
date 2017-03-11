@@ -25,4 +25,12 @@ public class FriendServiceImpl implements IFriendService {
     public int saveFriend(Friend friend) {
         return friendMapper.insert(friend);
     }
+
+    @Override
+    public void deleteFriend(Integer userId, Integer friendUserId) {
+        Friend friendDO = new Friend();
+        friendDO.setUserId(userId);
+        friendDO.setFriendId(friendUserId);
+        friendMapper.deleteByFriend(friendDO);
+    }
 }

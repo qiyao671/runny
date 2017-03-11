@@ -13,4 +13,6 @@ import com.wyq.study.pojo.Friend;
  **/
 public interface IFriendService {
     int saveFriend(Friend friend);
+
+    void deleteFriend(Integer userId, Integer friendUserId);
 }
