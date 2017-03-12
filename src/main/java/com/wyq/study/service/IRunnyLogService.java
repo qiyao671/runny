@@ -28,7 +28,11 @@ public interface IRunnyLogService {
 
     RunnyLog getFastLogInfo(Integer userId);
 
+    RunnyLog getFastPaceLog(Integer userId);
+
     PageInfo listTotalRank(Integer num, Integer pageSize);
 
     PageInfo listTimeRank(Integer num, Integer pageSize, Date startTime, Date endTime);
+
+    int saveRunnyLog(RunnyLog runnyLog);
 }

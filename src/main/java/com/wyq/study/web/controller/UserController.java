@@ -239,5 +239,9 @@ public class UserController extends BaseController {
         return returnCallback("Success", userVOList);
     }
 
+    /**
+     * 获得好友列表
+     */
+
 
 }

@@ -32,4 +32,5 @@ public interface RunnyLogMapper {
 
     List<RunnyLog> listTimeRank(RunnyLog runnyLog);
 
+    RunnyLog selectFastPaceLogInfo(Integer userId);
 }

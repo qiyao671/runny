@@ -36,26 +36,39 @@
             <if test="minDistance != null and minDistance!=''">
                 AND distance >= #{minDistance,jdbcType=DOUBLE}
             </if>
+            <if test="userId != null and userId!=''">
+                AND user_id = #{userId,jdbcType==INTEGER}
+            </if>
         </trim>
-        order by spend_time ASC;
+        order by spend_time ASC limit 0,1;
     </select>
     <select id="selectFarthestLogInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         SELECT
         <include refid="Base_Column_List"/>
         from runny_log
-        order by distance DESC;
+        where user_id = #{userId,jdbcType=INTEGER}
+        order by distance DESC limit 0,1;
     </select>
     <select id="selectLongestLogInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         SELECT
         <include refid="Base_Column_List"/>
         from runny_log
-        order by spend_time DESC;
+        where user_id = #{userId,jdbcType=INTEGER}
+        order by spend_time DESC limit 0,1;
     </select>
     <select id="selectFastLogInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         SELECT
         <include refid="Base_Column_List"/>
         from runny_log
-        order by (distance/spend_time) DESC ;
+        where user_id = #{userId,jdbcType=INTEGER}
+        order by (distance/spend_time) DESC limit 0,1;
+    </select>
+    <select id="selectFastPaceLogInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from runny_log
+        where user_id = #{userId,jdbcType=INTEGER}
+        order by (distance/spend_time) DESC limit 0,1;
     </select>
     <select id="listTotalRank" resultMap="BaseResultMap" parameterType="com.wyq.study.pojo.RunnyLog">
         SELECT

@@ -71,6 +71,13 @@ public class RunnyLogServiceImpl implements IRunnyLogService {
     }
 
     @Override
+    public RunnyLog getFastPaceLog(Integer userId) {
+        RunnyLog logInfo = runnyLogMapper.selectFastPaceLogInfo(userId);
+
+        return logInfo;
+    }
+
+    @Override
     public PageInfo listTotalRank(Integer num, Integer pageSize) {
         PageHelper.startPage(num, pageSize);
         RunnyLog runnyLog = new RunnyLog();
@@ -94,6 +101,12 @@ public class RunnyLogServiceImpl implements IRunnyLogService {
         }
         PageInfo pageInfo = new PageInfo(timeRankList);
         return pageInfo;
+    }
+
+    @Override
+    public int saveRunnyLog(RunnyLog runnyLog) {
+        runnyLogMapper.insert(runnyLog);
+        return runnyLog.getId();
     }
 
     public static void main(String args[]) {

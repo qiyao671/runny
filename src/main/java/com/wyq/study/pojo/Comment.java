@@ -1,15 +1,23 @@
 package com.wyq.study.pojo;
 
+import java.util.Date;
+
 public class Comment {
     private Integer id;
 
     private Integer momentId;
 
-    private String commentContent;
+    private String content;
 
     private Integer userId;
 
     private Integer repliedUserId;
+
+    private Short status;
+
+    private Date gmtCreate;
+
+    private Date gmtModified;
 
     public Integer getId() {
         return id;
@@ -27,12 +35,12 @@ public class Comment {
         this.momentId = momentId;
     }
 
-    public String getCommentContent() {
-        return commentContent;
+    public String getContent() {
+        return content;
     }
 
-    public void setCommentContent(String commentContent) {
-        this.commentContent = commentContent == null ? null : commentContent.trim();
+    public void setContent(String content) {
+        this.content = content == null ? null : content.trim();
     }
 
     public Integer getUserId() {
@@ -49,5 +57,29 @@ public class Comment {
 
     public void setRepliedUserId(Integer repliedUserId) {
         this.repliedUserId = repliedUserId;
+    }
+
+    public Short getStatus() {
+        return status;
+    }
+
+    public void setStatus(Short status) {
+        this.status = status;
+    }
+
+    public Date getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
+
+    public Date getGmtModified() {
+        return gmtModified;
+    }
+
+    public void setGmtModified(Date gmtModified) {
+        this.gmtModified = gmtModified;
     }
 }

@@ -4,12 +4,15 @@
   <resultMap id="BaseResultMap" type="com.wyq.study.pojo.Comment" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="moment_id" property="momentId" jdbcType="INTEGER" />
-    <result column="comment_content" property="commentContent" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
     <result column="user_id" property="userId" jdbcType="INTEGER" />
     <result column="replied_user_id" property="repliedUserId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, moment_id, comment_content, user_id, replied_user_id
+    id, moment_id, content, user_id, replied_user_id, status, gmt_create, gmt_modified
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -22,10 +25,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wyq.study.pojo.Comment" >
-    insert into comment (id, moment_id, comment_content, 
-      user_id, replied_user_id)
-    values (#{id,jdbcType=INTEGER}, #{momentId,jdbcType=INTEGER}, #{commentContent,jdbcType=VARCHAR}, 
-      #{userId,jdbcType=INTEGER}, #{repliedUserId,jdbcType=INTEGER})
+    insert into comment (id, moment_id, content, 
+      user_id, replied_user_id, status, 
+      gmt_create, gmt_modified)
+    values (#{id,jdbcType=INTEGER}, #{momentId,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=INTEGER}, #{repliedUserId,jdbcType=INTEGER}, #{status,jdbcType=SMALLINT}, 
+      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.wyq.study.pojo.Comment" >
     insert into comment
@@ -36,14 +41,23 @@
       <if test="momentId != null" >
         moment_id,
       </if>
-      <if test="commentContent != null" >
-        comment_content,
+      <if test="content != null" >
+        content,
       </if>
       <if test="userId != null" >
         user_id,
       </if>
       <if test="repliedUserId != null" >
         replied_user_id,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create,
+      </if>
+      <if test="gmtModified != null" >
+        gmt_modified,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -53,14 +67,23 @@
       <if test="momentId != null" >
         #{momentId,jdbcType=INTEGER},
       </if>
-      <if test="commentContent != null" >
-        #{commentContent,jdbcType=VARCHAR},
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
       </if>
       <if test="userId != null" >
         #{userId,jdbcType=INTEGER},
       </if>
       <if test="repliedUserId != null" >
         #{repliedUserId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="gmtCreate != null" >
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null" >
+        #{gmtModified,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -70,8 +93,8 @@
       <if test="momentId != null" >
         moment_id = #{momentId,jdbcType=INTEGER},
       </if>
-      <if test="commentContent != null" >
-        comment_content = #{commentContent,jdbcType=VARCHAR},
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
       </if>
       <if test="userId != null" >
         user_id = #{userId,jdbcType=INTEGER},
@@ -79,15 +102,27 @@
       <if test="repliedUserId != null" >
         replied_user_id = #{repliedUserId,jdbcType=INTEGER},
       </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null" >
+        gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wyq.study.pojo.Comment" >
     update comment
     set moment_id = #{momentId,jdbcType=INTEGER},
-      comment_content = #{commentContent,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
       user_id = #{userId,jdbcType=INTEGER},
-      replied_user_id = #{repliedUserId,jdbcType=INTEGER}
+      replied_user_id = #{repliedUserId,jdbcType=INTEGER},
+      status = #{status,jdbcType=SMALLINT},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

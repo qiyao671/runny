@@ -33,6 +33,8 @@ public class RunnyLog {
     private Double minDistance;
 
     private Double fastSpend;
+    /*最快配速*/
+    private Double fastPace;
 
     private Date beginTime;
 
@@ -172,5 +174,13 @@ public class RunnyLog {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public Double getFastPace() {
+        return fastPace;
+    }
+
+    public void setFastPace(Double fastPace) {
+        this.fastPace = fastPace;
     }
 }

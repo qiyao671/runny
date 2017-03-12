@@ -6,6 +6,7 @@ import com.wyq.study.service.IFriendService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * 好友逻辑层
@@ -23,6 +24,7 @@ public class FriendServiceImpl implements IFriendService {
 
     @Override
     public int saveFriend(Friend friend) {
+        friend.setCreateTime(new Date());
         return friendMapper.insert(friend);
     }
 

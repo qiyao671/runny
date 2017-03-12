@@ -195,7 +195,11 @@ public class RunnyLogController extends BaseController {
     }
 
     /**
-     * 记录跑步信息
+     * 添加跑步记录
+     *
+     * @param token
+     * @param runnyLog
+     * @return
      */
     @RequestMapping(value = "/saveRunnyLog", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
@@ -204,10 +208,8 @@ public class RunnyLogController extends BaseController {
         if (userId == null) {
             return returnCallback("Error", "您还未登录，请您先登录!");
         }
-
-
+        runnyLogService.saveRunnyLog(runnyLog);
         return returnCallback("Success", "记录成功！");
     }
-
 
 }
