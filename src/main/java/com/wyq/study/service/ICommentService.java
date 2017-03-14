@@ -1,5 +1,7 @@
 package com.wyq.study.service;
 
+import com.wyq.study.pojo.Comment;
+
 /**
  * ${DESCRIPTION}
  * 模块名称：study
@@ -10,4 +12,11 @@ package com.wyq.study.service;
  * 系统版本：1.0.0
  **/
 public interface ICommentService {
+    int saveComment(Comment comment);
+
+    Comment getCommentById(Integer commentId);
+
+    void deleteById(Integer commentId);
+
+    void deleteComment(Integer userId, Integer momentId);
 }

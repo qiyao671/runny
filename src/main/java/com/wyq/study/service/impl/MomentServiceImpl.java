@@ -35,8 +35,11 @@ public class MomentServiceImpl implements IMomentService {
     }
 
     @Override
-    public void deleteMoment(Integer id) {
-        momentMapper.deleteByPrimaryKey(id);
+    public void deleteMoment(Integer userId,Integer id) {
+        Moment momentDO = new Moment();
+        momentDO.setUserId(id);
+        momentDO.setUserId(userId);
+        momentMapper.deleteMoment(momentDO);
     }
 
     @Override

@@ -20,7 +20,7 @@ public interface IMomentService {
 
     Moment getMomentById(Integer momentId);
 
-    void deleteMoment(Integer id);
+    void deleteMoment(Integer userId, Integer id);
 
     void updateMoment(Moment moment);
 

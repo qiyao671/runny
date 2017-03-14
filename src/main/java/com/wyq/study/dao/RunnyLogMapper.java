@@ -21,7 +21,6 @@ public interface RunnyLogMapper {
 
     RunnyLog selectPersonalLogInfo(RunnyLog runnyLog);
 
-
     RunnyLog selectFarthestLogInfo(Integer userId);
 
     RunnyLog selectLongestLogInfo(Integer userId);

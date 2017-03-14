@@ -19,7 +19,7 @@
         <result column="age" property="age" jdbcType="INTEGER"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, username, password, rank, profile, sex, height, weight, birthday, location, community_id, 
+    id, username, password, rank, profile, sex, height, weight, birthday, location, community_id,
     total_run_id, best_run_id, signature, age
   </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">

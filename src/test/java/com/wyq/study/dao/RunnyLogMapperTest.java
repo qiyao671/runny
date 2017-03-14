@@ -50,6 +50,7 @@ public class RunnyLogMapperTest {
         RunnyLog runnyLog = new RunnyLog();
         runnyLog.setMaxDistance(10.0d);
         runnyLog.setMinDistance(5.0d);
+        runnyLog.setUserId(userId);
         RunnyLog runnylogVO = runnyLogMapper.selectPersonalLogInfo(runnyLog);
 
     }
@@ -59,9 +60,6 @@ public class RunnyLogMapperTest {
         RunnyLog runnyLog = new RunnyLog();
         List<RunnyLog> runnyLogs = runnyLogMapper.listTotalRank(runnyLog);
     }
-
-
-
 
 
 }

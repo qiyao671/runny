@@ -66,6 +66,10 @@
     delete from moment
     where id = #{id,jdbcType=INTEGER}
   </delete>
+    <delete id="deleteMoment" parameterType="com.wyq.study.pojo.Moment">
+    delete from moment
+    where id = #{id,jdbcType=INTEGER} AND user_id = #{userId,jdbcType=INTEGER}
+  </delete>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wyq.study.pojo.Moment">
     insert into moment (id, user_id, title, 
       picture, gmt_create, gmt_modified, 

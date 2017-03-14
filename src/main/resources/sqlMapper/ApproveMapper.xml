@@ -9,6 +9,11 @@
         <result column="status" property="status" jdbcType="SMALLINT"/>
         <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP"/>
         <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP"/>
+        <association property="user" column="user_id" javaType="com.wyq.study.pojo.User">
+            <id column="id" property="id" jdbcType="INTEGER"/>
+            <result column="username" property="username" jdbcType="VARCHAR"/>
+            <result column="profile" property="profile" jdbcType="VARCHAR"/>
+        </association>
     </resultMap>
     <sql id="Base_Column_List">
     id, moment_id, user_id, approve_user_id, status, gmt_create, gmt_modified
@@ -19,9 +24,19 @@
         from approve
         where id = #{id,jdbcType=INTEGER}
     </select>
+    <select id="listApproveUser" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT *
+        from user ur left join approve ae on ur.id = ae.user_id
+        where moment_id = #{momentId,jdbcType=INTEGER}
+        order by gmt_create asc
+    </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from approve
     where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <delete id="deleteApprove" parameterType="com.wyq.study.pojo.Approve">
+    delete from approve
+    where user_id = #{userId,jdbcType=INTEGER} AND moment_id = #{momentId,jdbcType=INTEGER}
   </delete>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wyq.study.pojo.Approve">
     insert into approve (id, moment_id, user_id, 

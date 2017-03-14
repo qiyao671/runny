@@ -17,6 +17,9 @@ public class Approve {
 
     private Date gmtModified;
 
+    /*非数据库*/
+    private User user;
+
     public Integer getId() {
         return id;
     }
@@ -71,5 +74,13 @@ public class Approve {
 
     public void setGmtModified(Date gmtModified) {
         this.gmtModified = gmtModified;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

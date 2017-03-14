@@ -24,4 +24,7 @@ public interface MomentMapper {
     List<Moment> listNewestMoments(Moment moment);
 
     List<Moment> listPageMoments(Moment momentQry);
+
+    void deleteMoment(Moment momentDO);
+
 }

@@ -11,7 +11,7 @@
  Target Server Version : 50173
  File Encoding         : utf-8
 
- Date: 03/12/2017 21:37:00 PM
+ Date: 03/14/2017 21:22:34 PM
 */
 
 SET NAMES utf8;
@@ -163,7 +163,7 @@ CREATE TABLE `user` (
 --  Records of `user`
 -- ----------------------------
 BEGIN;
-INSERT INTO `user` VALUES ('1', 'xiaohong', '123456', '2', 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=4225565668,46745471&fm=80&w=179&h=119&img.JPEG', '女', '180', '98', '2017-02-28 20:29:22', '浙江省宁波市鄞州区', '12', '3', '13', null, null), ('2', 'xiaoli', '123456', '2', 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=4225565668,46745471&fm=80&w=179&h=119&img.JPEG', '女', '180', '98', '2017-02-28 20:33:33', '浙江省宁波市鄞州区', '12', '3', '13', null, null), ('3', 'JasonWang', 'CF74FE3337EE674192CEF3DE846642AA05F517831F579E913D23373D', null, null, null, null, null, null, null, null, null, null, null, null), ('4', 'xiaoyao', '48E0B5B64D618D210C49F434F56C738C6865C5FDF2FBFAE93C2D6381', null, null, null, null, null, null, null, null, null, null, null, null), ('5', 'xiaohua', '8194E1A245E5D23F0E7680D17B2AD1615AA3621381C9D96852BE853B', null, null, null, null, null, null, null, null, null, null, null, '18');
+INSERT INTO `user` VALUES ('1', 'xiaohong', '123456', '2', 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=4225565668,46745471&fm=80&w=179&h=119&img.JPEG', '女', '180', '98', '2017-02-28 20:29:22', '浙江省宁波市鄞州区', '12', '3', '13', null, null), ('2', 'xiaoli', '123456', '2', 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCADIAIUDAREAAhEB', '女', '180', '98', '2017-02-28 20:33:33', '浙江省宁波市鄞州区', '12', '3', '13', null, null), ('3', 'JasonWang', 'CF74FE3337EE674192CEF3DE846642AA05F517831F579E913D23373D', null, 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCADIAIYDASIAAhEB', null, null, null, null, null, null, null, null, null, null), ('4', 'xiaoyao', '48E0B5B64D618D210C49F434F56C738C6865C5FDF2FBFAE93C2D6381', null, 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/7RhcUGhvdG9zaG9wIDMuMAA4QklNBCUAAAAAABAAAAAAAAAAAAAAAAAAAAAAOEJJTQPtAAAAAAAQAEgAAAABAAIASAAAAAEAAjhCSU0EJgAAAAAADgAAAAAAAAAAAAA/gAAAOEJJTQQNAAAAAAAEAAAAHjhCSU0EGQAAAAAABAAAAB44QklNA/MAAAAAAAkAAAAAAAAAAAEA', null, null, null, null, null, null, null, null, null, null), ('5', 'xiaohua', '8194E1A245E5D23F0E7680D17B2AD1615AA3621381C9D96852BE853B', null, 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCADIAIUDASIAAhEB', null, null, null, null, null, null, null, null, null, '18');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -2,10 +2,13 @@ package com.wyq.study.service.impl;
 
 import com.wyq.study.dao.ApproveMapper;
 import com.wyq.study.pojo.Approve;
+import com.wyq.study.pojo.User;
 import com.wyq.study.service.IApproveService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 点赞逻辑层
@@ -28,7 +31,20 @@ public class ApproveServiceImpl implements IApproveService {
     }
 
     @Override
-    public void deleteApprove(Integer momentId) {
-        approveMapper.deleteByPrimaryKey(momentId);
+    public void deleteApprove(Integer userId, Integer momentId) {
+        Approve approveDO = new Approve();
+        approveDO.setUserId(userId);
+        approveDO.setMomentId(momentId);
+        approveMapper.deleteApprove(approveDO);
+    }
+
+    @Override
+    public List<User> listApproveUser(Integer momentId) {
+        List<Approve> approveList = approveMapper.listApproveUser(momentId);
+        List<User> userList = new ArrayList<User>();
+        for (Approve approve : approveList) {
+            userList.add(approve.getUser());
+        }
+        return userList;
     }
 }

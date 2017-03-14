@@ -41,20 +41,18 @@ public class RunnyLogServiceImpl implements IRunnyLogService {
 
     @Override
     public RunnyLog getPersonalLogInfo(RunnyLog runnyLog) {
-        RunnyLog logInfo = runnyLogMapper.selectPersonalLogInfo(runnyLog);
-        return logInfo;
+        return runnyLogMapper.selectPersonalLogInfo(runnyLog);
     }
 
     @Override
     public RunnyLog getFarthestLogInfo(Integer userId) {
-        RunnyLog logInfo = runnyLogMapper.selectFarthestLogInfo(userId);
-        return logInfo;
+        return runnyLogMapper.selectFarthestLogInfo(userId);
+
     }
 
     @Override
     public RunnyLog getLongestLogInfo(Integer userId) {
-        RunnyLog logInfo = runnyLogMapper.selectLongestLogInfo(userId);
-        return logInfo;
+        return runnyLogMapper.selectLongestLogInfo(userId);
     }
 
     @Override
@@ -65,16 +63,14 @@ public class RunnyLogServiceImpl implements IRunnyLogService {
             BigDecimal distance = new BigDecimal(Double.valueOf(logInfo.getDistance()));
             BigDecimal spendTime = new BigDecimal(Double.valueOf(logInfo.getSpendTime()));
             fastSpeed = distance.divide(spendTime, 2).doubleValue();
+            logInfo.setFastSpend(fastSpeed);
         }
-        logInfo.setFastSpend(fastSpeed);
         return logInfo;
     }
 
     @Override
     public RunnyLog getFastPaceLog(Integer userId) {
-        RunnyLog logInfo = runnyLogMapper.selectFastPaceLogInfo(userId);
-
-        return logInfo;
+        return runnyLogMapper.selectFastPaceLogInfo(userId);
     }
 
     @Override

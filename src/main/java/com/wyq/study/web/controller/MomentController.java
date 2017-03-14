@@ -2,10 +2,9 @@ package com.wyq.study.web.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.wyq.study.constant.ApproveConsts;
+import com.wyq.study.constant.CommentConsts;
 import com.wyq.study.constant.MomentConsts;
-import com.wyq.study.pojo.Approve;
-import com.wyq.study.pojo.Callback;
-import com.wyq.study.pojo.Moment;
+import com.wyq.study.pojo.*;
 import com.wyq.study.service.IApproveService;
 import com.wyq.study.service.ICommentService;
 import com.wyq.study.service.IMomentService;
@@ -83,7 +82,9 @@ public class MomentController extends BaseController {
         if (moment == null) {
             return returnCallback("Error", "找不到您要删除的动态");
         }
-        momentService.deleteMoment(momentId);
+        momentService.deleteMoment(userId, momentId);
+        approveService.deleteApprove(userId, momentId);
+        commentService.deleteComment(userId, momentId);
         return returnCallback("Success", "状态保存成功！");
     }
 
@@ -222,36 +223,75 @@ public class MomentController extends BaseController {
             return returnCallback("Success", "点赞成功!");
         }
         //取消点赞
-        approveService.deleteApprove(momentId);
+        approveService.deleteApprove(userId, momentId);
         return returnCallback("Success", "成功取消点赞!");
     }
 
-//    /**
-//     * 获得点赞好友信息
-//     */
-//    @RequestMapping(value = "/listApproveUser", method = {RequestMethod.GET, RequestMethod.POST})
-//    @ResponseBody
-//    public Callback listApproveUser(String token, Integer momentId) {
-//        Integer userId = AppSessionHelper.getAppUserId(token);
-//        if (userId == null) {
-//            return returnCallback("Error", "您还未登录，请您先登录!");
-//        }
-//        Moment moment = momentService.getMomentById(momentId);
-//        if (moment == null) {
-//            return returnCallback("Error", "找不到动态!");
-//        }
-//        approveService.listApproveUser(momentId);
-//
-//        return returnCallback("Error", null);
-//    }
+    /**
+     * 获得点赞好友信息
+     *
+     * @param token
+     * @param momentId
+     * @return
+     */
+    @RequestMapping(value = "/listApproveUser", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback listApproveUser(String token, Integer momentId) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback("Error", "您还未登录，请您先登录!");
+        }
+        Moment moment = momentService.getMomentById(momentId);
+        if (moment == null) {
+            return returnCallback("Error", "找不到动态!");
+        }
+        List<User> userList = approveService.listApproveUser(momentId);
+        return returnCallback("Success", userList);
+    }
 
     /**
      * 评论好友动态
      */
+    @RequestMapping(value = "/comment", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback comment(String token, Integer momentId, Comment comment) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback("Error", "您还未登录，请您先登录!");
+        }
+        Moment moment = momentService.getMomentById(momentId);
+        if (moment == null) {
+            return returnCallback("Error", "找不到动态!");
+        }
+        comment.setUserId(userId);
+        comment.setMomentId(momentId);
+        comment.setStatus(CommentConsts.NORMAL_MODEL);
+        comment.setGmtCreate(new Date());
+        commentService.saveComment(comment);
+        return returnCallback("Success", "评论成功！");
+    }
 
     /**
-     * 删除好友动态评论
+     * 删除对好友动态的评论
+     *
+     * @param token
+     * @param commentId
+     * @return
      */
+    @RequestMapping(value = "/deleteComment", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback deleteComment(String token, Integer commentId) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback("Error", "您还未登录，请您先登录!");
+        }
+        Comment comment = commentService.getCommentById(commentId);
+        if (comment == null) {
+            return returnCallback("Error", "找不到要删除的评论!");
+        }
+        commentService.deleteById(commentId);
+        return returnCallback("Success", "删除成功！");
+    }
 
     /**
      * 回复好友评论

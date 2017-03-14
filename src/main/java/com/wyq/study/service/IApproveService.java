@@ -1,6 +1,9 @@
 package com.wyq.study.service;
 
 import com.wyq.study.pojo.Approve;
+import com.wyq.study.pojo.User;
+
+import java.util.List;
 
 /**
  * ${DESCRIPTION}
@@ -15,5 +18,8 @@ public interface IApproveService {
 
     int saveApprove(Approve approve);
 
-    void deleteApprove(Integer momentId);
+    void deleteApprove(Integer userId, Integer momentId);
+
+    List<User> listApproveUser(Integer momentId);
+
 }

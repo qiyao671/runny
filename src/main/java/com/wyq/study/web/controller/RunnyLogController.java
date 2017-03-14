@@ -208,6 +208,9 @@ public class RunnyLogController extends BaseController {
         if (userId == null) {
             return returnCallback("Error", "您还未登录，请您先登录!");
         }
+        if (runnyLog == null) {
+            return returnCallback("Error", "您还未跑步!");
+        }
         runnyLogService.saveRunnyLog(runnyLog);
         return returnCallback("Success", "记录成功！");
     }

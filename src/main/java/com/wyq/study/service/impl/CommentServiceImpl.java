@@ -1,7 +1,11 @@
 package com.wyq.study.service.impl;
 
+import com.wyq.study.dao.CommentMapper;
+import com.wyq.study.pojo.Comment;
 import com.wyq.study.service.ICommentService;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * 朋友圈评论逻辑层
@@ -14,4 +18,30 @@ import org.springframework.stereotype.Service;
  **/
 @Service
 public class CommentServiceImpl implements ICommentService {
+    @Resource
+    private CommentMapper commentMapper;
+
+    @Override
+    public int saveComment(Comment comment) {
+        commentMapper.insert(comment);
+        return comment.getId();
+    }
+
+    @Override
+    public Comment getCommentById(Integer commentId) {
+        return commentMapper.selectByPrimaryKey(commentId);
+    }
+
+    @Override
+    public void deleteById(Integer commentId) {
+        commentMapper.deleteByPrimaryKey(commentId);
+    }
+
+    @Override
+    public void deleteComment(Integer userId, Integer momentId) {
+        Comment commentDO = new Comment();
+        commentDO.setUserId(userId);
+        commentDO.setMomentId(momentId);
+        commentMapper.deleteComment(commentDO);
+    }
 }
