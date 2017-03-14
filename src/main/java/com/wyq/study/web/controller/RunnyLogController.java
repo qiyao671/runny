@@ -81,22 +81,22 @@ public class RunnyLogController extends BaseController {
         //五公里最快
         runnyLog.setMinDistance(FIVE_KM);
         runnyLog.setMaxDistance(TEN_KM);
-        RunnyLog fiveRunlogVO = runnyLogService.getPersonalLogInfo(runnyLog);
-        bestLogInfo.put("fivePB", fiveRunlogVO);
+        RunnyLog fiveRunLogVO = runnyLogService.getPersonalLogInfo(runnyLog);
+        bestLogInfo.put("fivePB", fiveRunLogVO);
         //十公里最快
         runnyLog.setMinDistance(TEN_KM);
         runnyLog.setMaxDistance(HALF_MA);
-        RunnyLog tenRunlogVO = runnyLogService.getPersonalLogInfo(runnyLog);
-        bestLogInfo.put("tenPB", tenRunlogVO);
+        RunnyLog tenRunLogVO = runnyLogService.getPersonalLogInfo(runnyLog);
+        bestLogInfo.put("tenPB", tenRunLogVO);
         //半马最快
         runnyLog.setMinDistance(HALF_MA);
         runnyLog.setMaxDistance(FULL_MA);
-        RunnyLog halfMaRunlogVO = runnyLogService.getPersonalLogInfo(runnyLog);
-        bestLogInfo.put("halfMaPB", halfMaRunlogVO);
+        RunnyLog halfMaRunLogVO = runnyLogService.getPersonalLogInfo(runnyLog);
+        bestLogInfo.put("halfMaPB", halfMaRunLogVO);
         //全马最快
         runnyLog.setMinDistance(FULL_MA);
-        RunnyLog fullMaRunlogVO = runnyLogService.getPersonalLogInfo(runnyLog);
-        bestLogInfo.put("fullMaPB", fullMaRunlogVO);
+        RunnyLog fullMaRunLogVO = runnyLogService.getPersonalLogInfo(runnyLog);
+        bestLogInfo.put("fullMaPB", fullMaRunLogVO);
         //最远距离
         RunnyLog farthestRunLogVO = runnyLogService.getFarthestLogInfo(userId);
         bestLogInfo.put("farthestLogInfo", farthestRunLogVO);
