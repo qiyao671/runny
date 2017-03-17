@@ -106,6 +106,9 @@ public class RunnyLogController extends BaseController {
         //最快速度
         RunnyLog fastRunLogVO = runnyLogService.getFastLogInfo(userId);
         bestLogInfo.put("fastSpeed", fastRunLogVO);
+        //最快配速 --这个怎么计算勒
+        RunnyLog fastAveLogVO = runnyLogService.getFastPaceLog(userId);
+        bestLogInfo.put("fastAveLogVO", fastAveLogVO);
 
         return returnCallback("Success", bestLogInfo);
     }
@@ -125,6 +128,9 @@ public class RunnyLogController extends BaseController {
         if (userId == null) {
             return returnCallback("Error", "您还未登录，请您先登录!");
         }
+        if (num == null || pageSize == null) {
+            return returnCallback("Error", "您的分页参数为空");
+        }
         PageInfo pageInfo = runnyLogService.listTotalRank(num, pageSize);
         return returnCallback("Success", pageInfo);
     }
@@ -143,6 +149,9 @@ public class RunnyLogController extends BaseController {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback("Error", "您还未登录，请您先登录!");
+        }
+        if (num == null || pageSize == null) {
+            return returnCallback("Error", "您的分页参数为空");
         }
         Date beginMonth = DateUtils.monthStartTime(new Date());
         Date endMonth = DateUtils.monthEndTime(new Date());
@@ -165,6 +174,9 @@ public class RunnyLogController extends BaseController {
         if (userId == null) {
             return returnCallback("Error", "您还未登录，请您先登录!");
         }
+        if (num == null || pageSize == null) {
+            return returnCallback("Error", "您的分页参数为空");
+        }
         Date beginWeek = DateUtils.weekStartTime(new Date());
         Date endWeek = DateUtils.weekEndTime(new Date());
         PageInfo pageInfo = runnyLogService.listTimeRank(num, pageSize, beginWeek, endWeek);
@@ -186,6 +198,9 @@ public class RunnyLogController extends BaseController {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback("Error", "您还未登录，请您先登录!");
+        }
+        if (num == null || pageSize == null) {
+            return returnCallback("Error", "您的分页参数为空");
         }
         Date beginDay = DateUtil.beginOfDay(new Date());
         Date endDay = DateUtil.endOfDay(new Date());

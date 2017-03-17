@@ -1,7 +1,5 @@
 package com.wyq.study.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.wyq.study.dao.MomentMapper;
 import com.wyq.study.pojo.Moment;
 import com.wyq.study.service.IMomentService;
@@ -58,10 +56,9 @@ public class MomentServiceImpl implements IMomentService {
     }
 
     @Override
-    public PageInfo listPageMoments(Moment momentQry) {
-        PageHelper.startPage(momentQry.getNum(), momentQry.getPageSize());
-        List<Moment> momentList = momentMapper.listPageMoments(momentQry);
-        PageInfo pageInfo = new PageInfo(momentList);
-        return pageInfo;
+    public List<Moment> listMoreMoments(Moment momentQry) {
+        return momentMapper.listMoreMoments(momentQry);
     }
+
+
 }

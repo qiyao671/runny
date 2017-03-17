@@ -1,6 +1,5 @@
 package com.wyq.study.web.controller;
 
-import com.github.pagehelper.PageInfo;
 import com.wyq.study.constant.ApproveConsts;
 import com.wyq.study.constant.CommentConsts;
 import com.wyq.study.constant.MomentConsts;
@@ -11,6 +10,7 @@ import com.wyq.study.service.IMomentService;
 import com.wyq.study.service.IUserService;
 import com.wyq.study.utils.AppSessionHelper;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -49,7 +49,7 @@ public class MomentController extends BaseController {
      */
     @RequestMapping(value = "/saveMoment", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback saveMoment(String token, Moment moment) {
+    public Callback saveMoment(String token, @RequestBody Moment moment) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback("Error", "您还未登录，请您先登录!");
@@ -156,39 +156,33 @@ public class MomentController extends BaseController {
      * @param token
      * @param minId
      * @param maxId
-     * @param num
-     * @param pageSize
      * @return
      */
     @RequestMapping(value = "/listNewestMoments", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback listNewestMoments(String token, Integer minId, Integer maxId, Integer num, Integer pageSize) {
+    public Callback listNewestMoments(String token, Integer minId, Integer maxId) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback("Error", "您还未登录，请您先登录!");
         }
         //minId：上拉加载更多，maxId下拉刷新，加载新数据
-        if (minId != null && maxId != null) {
+        if (minId != null && maxId != null || maxId == null && minId == null) {
             return returnCallback("Error", "参数配置错误！");
         }
-        if (minId != null && maxId == null || minId == null && maxId != null) {
+        if (maxId != null) {
             Moment momentQry = new Moment();
             momentQry.setUserId(userId);
-            momentQry.setMinId(minId);
             momentQry.setMaxId(maxId);
             List<Moment> newestMomentListVO = momentService.listNewestMoments(momentQry);
             return returnCallback("Success", newestMomentListVO);
         }
-        //常规加载更多
-        if (num != null && pageSize != null) {
+        if (minId != null) {
             Moment momentQry = new Moment();
             momentQry.setUserId(userId);
-            momentQry.setNum(num);
-            momentQry.setPageSize(pageSize);
-            PageInfo pageInfoVO = momentService.listPageMoments(momentQry);
-            return returnCallback("Success", pageInfoVO);
+            momentQry.setMinId(minId);
+            List<Moment> moreMomentListVO = momentService.listMoreMoments(momentQry);
+            return returnCallback("Success", moreMomentListVO);
         }
-
         return returnCallback("Error", "参数配置错误!");
     }
 
@@ -296,6 +290,21 @@ public class MomentController extends BaseController {
     /**
      * 回复好友评论
      */
+    @RequestMapping(value = "/replyComment", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback replyComment(String token, Integer commentId) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback("Error", "您还未登录，请您先登录!");
+        }
+        Comment comment = commentService.getCommentById(commentId);
+        if (comment == null) {
+            return returnCallback("Error", "找不到要删除的评论!");
+        }
+        commentService.deleteById(commentId);
+        return returnCallback("Success", "删除成功！");
+    }
+
 
     /**
      * 删除回复好友评论

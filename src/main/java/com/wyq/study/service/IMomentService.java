@@ -1,6 +1,5 @@
 package com.wyq.study.service;
 
-import com.github.pagehelper.PageInfo;
 import com.wyq.study.pojo.Moment;
 
 import java.util.List;
@@ -28,5 +27,6 @@ public interface IMomentService {
 
     List<Moment> listNewestMoments(Moment moment);
 
-    PageInfo listPageMoments(Moment momentQry);
+    List<Moment> listMoreMoments(Moment momentQry);
+
 }

@@ -19,6 +19,8 @@ public class RunnyLog {
 
     private String momentContent;
 
+    private Double altitude;
+
     /*非数据库字段*/
     private Double totalDistance;
 
@@ -182,5 +184,13 @@ public class RunnyLog {
 
     public void setFastPace(Double fastPace) {
         this.fastPace = fastPace;
+    }
+
+    public Double getAltitude() {
+        return altitude;
+    }
+
+    public void setAltitude(Double altitude) {
+        this.altitude = altitude;
     }
 }

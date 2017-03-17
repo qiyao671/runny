@@ -154,6 +154,9 @@ public class UserController extends BaseController {
         if (userId == null) {
             return returnCallback("Error", "您还未登录，请您先登录!");
         }
+        if (num == null || pageSize == null) {
+            return returnCallback("Error", "您的分页参数为空");
+        }
         PageInfo pageInfo = userService.listFriends(userId, num, pageSize);
         return returnCallback("Success", pageInfo);
     }
