@@ -42,31 +42,31 @@ public class UserController extends BaseController {
     @ResponseBody
     public Callback login(User user) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         if (user == null) {
-            return returnCallback("Error", "请输入用户名及密码...");
+            return returnCallback(false, null, "请输入用户名及密码...");
         }
         String userName = user.getUsername();
         User userInDB = userService.selectByUserName(userName);
         if (userInDB == null) {
-            return returnCallback("Error", "此用户不存在,请重新输入...");
+            return returnCallback(false, null, "此用户不存在,请重新输入...");
         }
         try {
             if (MD5.validPassword(user.getPassword(), userInDB.getPassword())) {
                 String token = AppSessionHelper.getUserSession(userInDB.getId());
-                return returnCallback("Success", token);
+                return returnCallback(true, token, null);
             }
         } catch (NoSuchAlgorithmException e) {
-            return returnCallback("Error", "用户密码不正确,请重新输入");
+            return returnCallback(false, null, "用户密码不正确,请重新输入");
         } catch (UnsupportedEncodingException e) {
-            return returnCallback("Error", "用户密码不正确,请重新输入");
+            return returnCallback(false, null, "用户密码不正确,请重新输入");
         }
-        return returnCallback("Error", "用户密码不正确,请重新输入");
+        return returnCallback(false, null, "用户密码不正确,请重新输入");
     }
 
     @RequestMapping(value = "/add", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public Callback addUser(User user) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         if (user == null || StringUtils.isEmpty(user.getUsername())) {
-            return returnCallback("Error", "请输入用户信息");
+            return returnCallback(false, null, "请输入用户信息");
         }
         if (user.getBirthday() != null) {
             try {
@@ -74,22 +74,22 @@ public class UserController extends BaseController {
                 user.setAge(age);
             } catch (Exception e) {
                 e.printStackTrace();
-                return returnCallback("Error", "The birthDay is before Now.It's unbelievable!");
+                return returnCallback(false, null, "The birthDay is before Now.It's unbelievable!");
             }
         }
         User userInDB = userService.selectByUserName(user.getUsername());
         if (userInDB != null) {
-            return returnCallback("Error", "此用户名已存在！");
+            return returnCallback(false, null, "此用户名已存在！");
         }
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             String encryptedPwd = MD5.getEncryptedPwd(user.getPassword());
             user.setPassword(encryptedPwd);
             Integer userId = userService.insert(user);
             String token = AppSessionHelper.getUserSession(userId);
-            return returnCallback("Success", token);
+            return returnCallback(true, token, null);
         }
 
-        return returnCallback("Error", "用户注册失败!");
+        return returnCallback(false, null, "用户注册失败!");
     }
 
     /**
@@ -103,14 +103,14 @@ public class UserController extends BaseController {
     public Callback getUserInfo(String token) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         User userVO = userService.getByUserId(userId);
         if (userVO != null) {
-            return returnCallback("Success", userVO);
+            return returnCallback(true, userVO, null);
         }
 
-        return returnCallback("Error", "用户信息获取失败！");
+        return returnCallback(false, null, "用户信息获取失败！");
     }
 
     /**
@@ -125,18 +125,18 @@ public class UserController extends BaseController {
     public Callback updateUser(User user, String token) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         if (user == null) {
-            return returnCallback("Error", "请输入用户信息");
+            return returnCallback(false, null, "请输入用户信息");
         }
         String resultMsg = userService.checkUser(user);
         if (resultMsg != null) {
-            return returnCallback("Error", resultMsg);
+            return returnCallback(false, null, resultMsg);
         }
         userService.updateUser(user);
 
-        return returnCallback("Success", "您的信息修改很成功!");
+        return returnCallback(true, "您的信息修改很成功!", null);
     }
 
     /**
@@ -152,13 +152,13 @@ public class UserController extends BaseController {
     public Callback listFriends(String token, Integer num, Integer pageSize) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         if (num == null || pageSize == null) {
-            return returnCallback("Error", "您的分页参数为空");
+            return returnCallback(false, null, "您的分页参数为空");
         }
         PageInfo pageInfo = userService.listFriends(userId, num, pageSize);
-        return returnCallback("Success", pageInfo);
+        return returnCallback(true, pageInfo, null);
     }
 
     /**
@@ -173,21 +173,21 @@ public class UserController extends BaseController {
     public Callback saveFriend(String token, Integer friendUserId) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         if (friendUserId == null) {
-            return returnCallback("Error", "请先选择您要添加的好友!");
+            return returnCallback(false, null, "请先选择您要添加的好友!");
         }
         User user = userService.getByUserId(friendUserId);
         if (user == null) {
-            return returnCallback("Error", "找不到您要添加的好友！");
+            return returnCallback(false, null, "找不到您要添加的好友！");
         }
         Friend friend = new Friend();
         friend.setUserId(userId);
         friend.setFriendId(friendUserId);
         friend.setCreateTime(new Date());
         friendService.saveFriend(friend);
-        return returnCallback("Success", "添加好友成功！");
+        return returnCallback(true, "添加好友成功！", null);
     }
 
     /**
@@ -202,17 +202,17 @@ public class UserController extends BaseController {
     public Callback deleteFriend(String token, Integer friendUserId) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         if (friendUserId == null) {
-            return returnCallback("Error", "请先选择您要删除的好友!");
+            return returnCallback(false, null, "请先选择您要删除的好友!");
         }
         User friendUser = userService.getByUserId(friendUserId);
         if (friendUser == null) {
-            return returnCallback("Error", "找不到您要删除的好友！");
+            return returnCallback(false, null, "找不到您要删除的好友！");
         }
         friendService.deleteFriend(userId, friendUserId);
-        return returnCallback("Success", "添加好友成功！");
+        return returnCallback(true, "添加好友成功！", null);
     }
 
 
@@ -228,24 +228,23 @@ public class UserController extends BaseController {
     public Callback listUsersByUsername(String token, String username) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         if (username == null) {
-            return returnCallback("Error", "请先选择您要添加的好友!");
+            return returnCallback(false, null, "请先选择您要添加的好友!");
         }
         User userQV = new User();
         userQV.setUsername(username);
         List<User> userVOList = userService.listUsersByUserNameLike(userQV);
         if (userVOList == null || userVOList.size() == 0) {
-            return returnCallback("Error", "没有搜索到对应的结果!");
+            return returnCallback(false, null, "没有搜索到对应的结果!");
         }
-        return returnCallback("Success", userVOList);
+        return returnCallback(true, userVOList, null);
     }
 
     /**
      * 获得好友列表
      */
-
 
 
 }

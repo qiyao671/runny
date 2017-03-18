@@ -24,20 +24,22 @@ import java.util.Map;
  * Created by Gavin on 2015-09-14 15:50.
  */
 public class BaseController {
-    protected Logger logger           = LoggerFactory.getLogger(this.getClass());
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected Callback callback = new Callback();
     protected Map<String, Object> callbackMap = new HashMap<String, Object>();
-    protected String    callBackMsg;
-    protected Object    responseContext;
+    protected String callBackMsg;
+    protected Boolean result;
+    protected Object responseContext;
     @Resource
     protected HttpServletRequest request;
     protected HttpServletResponse response;
 
 
-    public Callback returnCallback(String callBackMsg, Object responseContext){
-        callback.setCallbackMsg(callBackMsg);
+    public Callback returnCallback(Boolean result, Object responseContext, String msg) {
+        callback.setResult(result);
         callback.setResponseContext(responseContext);
+        callback.setMsg(msg);
         return callback;
     }
 
@@ -84,6 +86,14 @@ public class BaseController {
 
     public void setCallBackMsg(String callBackMsg) {
         this.callBackMsg = callBackMsg;
+    }
+
+    public Boolean getResult() {
+        return result;
+    }
+
+    public void setResult(Boolean result) {
+        this.result = result;
     }
 
     public Object getResponseContext() {

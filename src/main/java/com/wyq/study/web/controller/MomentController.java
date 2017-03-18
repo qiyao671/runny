@@ -52,16 +52,16 @@ public class MomentController extends BaseController {
     public Callback saveMoment(String token, @RequestBody Moment moment) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         if (moment == null) {
-            return returnCallback("Error", "请您先填写您的状态内容！");
+            return returnCallback(false, null, "请您先填写您的状态内容！");
         }
         moment.setUserId(userId);
         moment.setGmtCreate(new Date());
         moment.setStatus(MomentConsts.SHOW_MODEL);
         momentService.saveMoment(moment);
-        return returnCallback("Success", "状态保存成功！");
+        return returnCallback(true, "状态保存成功！", null);
     }
 
     /**
@@ -76,16 +76,16 @@ public class MomentController extends BaseController {
     public Callback deleteMoment(String token, Integer momentId) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         Moment moment = momentService.getMomentById(momentId);
         if (moment == null) {
-            return returnCallback("Error", "找不到您要删除的动态");
+            return returnCallback(false, null, "找不到您要删除的动态");
         }
         momentService.deleteMoment(userId, momentId);
         approveService.deleteApprove(userId, momentId);
         commentService.deleteComment(userId, momentId);
-        return returnCallback("Success", "状态保存成功！");
+        return returnCallback(true, "状态保存成功！", null);
     }
 
     /**
@@ -100,16 +100,16 @@ public class MomentController extends BaseController {
     public Callback hideMoment(String token, Integer momentId) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         Moment moment = momentService.getMomentById(momentId);
         if (moment == null) {
-            return returnCallback("Error", "找不到您要隐藏的动态");
+            return returnCallback(false, null, "找不到您要隐藏的动态");
         }
         moment.setStatus(MomentConsts.HIDE_MODEL);
         moment.setGmtModified(new Date());
         momentService.updateMoment(moment);
-        return returnCallback("Success", "隐藏个人动态成功成功！");
+        return returnCallback(true, "隐藏个人动态成功成功！", null);
     }
 
     /**
@@ -124,13 +124,13 @@ public class MomentController extends BaseController {
     public Callback getMomentById(String token, Integer momentId) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         Moment momentVO = momentService.getMomentById(momentId);
         if (momentVO == null) {
-            return returnCallback("Error", "找不到您要查看的动态信息");
+            return returnCallback(false, null, "找不到您要查看的动态信息");
         }
-        return returnCallback("Success", momentVO);
+        return returnCallback(true, momentVO, null);
     }
 
     /**
@@ -144,10 +144,10 @@ public class MomentController extends BaseController {
     public Callback getMomentById(String token) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         Moment newestMomentVO = momentService.getNewestMoment(userId);
-        return returnCallback("Success", newestMomentVO);
+        return returnCallback(true, newestMomentVO, null);
     }
 
     /**
@@ -163,27 +163,27 @@ public class MomentController extends BaseController {
     public Callback listNewestMoments(String token, Integer minId, Integer maxId) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         //minId：上拉加载更多，maxId下拉刷新，加载新数据
         if (minId != null && maxId != null || maxId == null && minId == null) {
-            return returnCallback("Error", "参数配置错误！");
+            return returnCallback(false, null, "参数配置错误！");
         }
         if (maxId != null) {
             Moment momentQry = new Moment();
             momentQry.setUserId(userId);
             momentQry.setMaxId(maxId);
             List<Moment> newestMomentListVO = momentService.listNewestMoments(momentQry);
-            return returnCallback("Success", newestMomentListVO);
+            return returnCallback(true, newestMomentListVO, null);
         }
         if (minId != null) {
             Moment momentQry = new Moment();
             momentQry.setUserId(userId);
             momentQry.setMinId(minId);
             List<Moment> moreMomentListVO = momentService.listMoreMoments(momentQry);
-            return returnCallback("Success", moreMomentListVO);
+            return returnCallback(true, moreMomentListVO, null);
         }
-        return returnCallback("Error", "参数配置错误!");
+        return returnCallback(false, null, "参数配置错误!");
     }
 
     /**
@@ -199,11 +199,11 @@ public class MomentController extends BaseController {
     public Callback approve(String token, Integer momentId, Boolean isApprove) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         Moment moment = momentService.getMomentById(momentId);
         if (moment == null) {
-            return returnCallback("Error", "找不到您要点赞的动态!");
+            return returnCallback(false, null, "找不到您要点赞的动态!");
         }
         //点赞
         if (isApprove) {
@@ -214,11 +214,11 @@ public class MomentController extends BaseController {
             approve.setMomentId(momentId);
             approve.setStatus(ApproveConsts.NORMAL_MODEL);
             approveService.saveApprove(approve);
-            return returnCallback("Success", "点赞成功!");
+            return returnCallback(true, "点赞成功!", null);
         }
         //取消点赞
         approveService.deleteApprove(userId, momentId);
-        return returnCallback("Success", "成功取消点赞!");
+        return returnCallback(true, "成功取消点赞!", null);
     }
 
     /**
@@ -233,14 +233,14 @@ public class MomentController extends BaseController {
     public Callback listApproveUser(String token, Integer momentId) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         Moment moment = momentService.getMomentById(momentId);
         if (moment == null) {
-            return returnCallback("Error", "找不到动态!");
+            return returnCallback(false, null, "找不到动态!");
         }
         List<User> userList = approveService.listApproveUser(momentId);
-        return returnCallback("Success", userList);
+        return returnCallback(true, userList, null);
     }
 
     /**
@@ -251,18 +251,18 @@ public class MomentController extends BaseController {
     public Callback comment(String token, Integer momentId, Comment comment) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         Moment moment = momentService.getMomentById(momentId);
         if (moment == null) {
-            return returnCallback("Error", "找不到动态!");
+            return returnCallback(false, null, "找不到动态!");
         }
         comment.setUserId(userId);
         comment.setMomentId(momentId);
         comment.setStatus(CommentConsts.NORMAL_MODEL);
         comment.setGmtCreate(new Date());
         commentService.saveComment(comment);
-        return returnCallback("Success", "评论成功！");
+        return returnCallback(true, "评论成功！", null);
     }
 
     /**
@@ -277,14 +277,14 @@ public class MomentController extends BaseController {
     public Callback deleteComment(String token, Integer commentId) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         Comment comment = commentService.getCommentById(commentId);
         if (comment == null) {
-            return returnCallback("Error", "找不到要删除的评论!");
+            return returnCallback(false, null, "找不到要删除的评论!");
         }
         commentService.deleteById(commentId);
-        return returnCallback("Success", "删除成功！");
+        return returnCallback(true, "删除成功！", null);
     }
 
     /**
@@ -295,14 +295,14 @@ public class MomentController extends BaseController {
     public Callback replyComment(String token, Integer commentId) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
-            return returnCallback("Error", "您还未登录，请您先登录!");
+            return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         Comment comment = commentService.getCommentById(commentId);
         if (comment == null) {
-            return returnCallback("Error", "找不到要删除的评论!");
+            return returnCallback(false, null, "找不到要删除的评论!");
         }
         commentService.deleteById(commentId);
-        return returnCallback("Success", "删除成功！");
+        return returnCallback(true, "删除成功！", null);
     }
 
 

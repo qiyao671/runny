@@ -9,9 +9,11 @@ package com.wyq.study.pojo;
  */
 public class Callback {
     /* 请求返回 状态的信息 */
-    private String callbackMsg;
+    private Boolean result;
     /* 请求返回 具体内容*/
     private Object responseContext;
+    /*返回请求的msg*/
+    private String msg;
 
     /**
      * default
@@ -30,18 +32,23 @@ public class Callback {
         this.code = code;
     }
 
-    public Callback(String callbackMsg, Object responseContext){
+    public Callback(Boolean result, Object responseContext, String msg) {
         super();
-        this.callbackMsg = callbackMsg;
+        this.result = result;
         this.responseContext = responseContext;
+        this.msg = msg;
     }
 
-    public String getCallbackMsg() {
-        return callbackMsg;
+    public Boolean getResult() {
+        return result;
     }
 
-    public void setCallbackMsg(String callbackMsg) {
-        this.callbackMsg = callbackMsg;
+    public void setResult(Boolean result) {
+        this.result = result;
+    }
+
+    public void setCallbackMsg(Boolean result) {
+        this.result = result;
     }
 
     public Object getResponseContext() {
@@ -50,5 +57,13 @@ public class Callback {
 
     public void setResponseContext(Object responseContext) {
         this.responseContext = responseContext;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 }
