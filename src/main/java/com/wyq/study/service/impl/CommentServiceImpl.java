@@ -6,6 +6,7 @@ import com.wyq.study.service.ICommentService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 朋友圈评论逻辑层
@@ -43,5 +44,20 @@ public class CommentServiceImpl implements ICommentService {
         commentDO.setUserId(userId);
         commentDO.setMomentId(momentId);
         commentMapper.deleteComment(commentDO);
+    }
+
+    @Override
+    public List<Comment> listCommentsByMomentId(Integer id) {
+        return commentMapper.listCommentsByMomentId(id);
+    }
+
+    @Override
+    public void replyComment(Comment comment) {
+        commentMapper.insert(comment);
+    }
+
+    @Override
+    public void deleteReplyComment(Integer commentId) {
+        commentMapper.deleteByPrimaryKey(commentId);
     }
 }

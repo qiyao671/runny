@@ -1,5 +1,7 @@
 package com.wyq.study.pojo;
 
+import com.wyq.study.utils.DateUtils;
+
 import java.util.Date;
 
 public class User {
@@ -146,6 +148,15 @@ public class User {
     }
 
     public Integer getAge() {
+        if (this.birthday == null) {
+            return 0;
+        }
+        try {
+            age = DateUtils.getAge(this.birthday);
+        } catch (Exception e) {
+            e.printStackTrace();
+            age = 0;
+        }
         return age;
     }
 

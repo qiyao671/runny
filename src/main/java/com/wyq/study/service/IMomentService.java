@@ -23,10 +23,11 @@ public interface IMomentService {
 
     void updateMoment(Moment moment);
 
-    Moment getNewestMoment(Integer userId);
+    Moment getFriendsNewestMoment(Integer userId);
 
     List<Moment> listNewestMoments(Moment moment);
 
     List<Moment> listMoreMoments(Moment momentQry);
 
+    List<Moment> listUserMomentByUserId(Integer userId);
 }

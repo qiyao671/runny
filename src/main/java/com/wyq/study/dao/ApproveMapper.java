@@ -20,4 +20,8 @@ public interface ApproveMapper {
     List<Approve> listApproveUser(Integer momentId);
 
     void deleteApprove(Approve approveDO);
+
+    List<Approve> listApprovesByMomentId(Integer id);
+
+    Approve getApprove(Approve approveQry);
 }

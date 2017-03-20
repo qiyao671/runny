@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -112,26 +113,26 @@ public class MomentController extends BaseController {
         return returnCallback(true, "隐藏个人动态成功成功！", null);
     }
 
-    /**
-     * 获得好友动态信息
-     *
-     * @param token
-     * @param momentId
-     * @return
-     */
-    @RequestMapping(value = "/getMomentById", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Callback getMomentById(String token, Integer momentId) {
-        Integer userId = AppSessionHelper.getAppUserId(token);
-        if (userId == null) {
-            return returnCallback(false, null, "您还未登录，请您先登录!");
-        }
-        Moment momentVO = momentService.getMomentById(momentId);
-        if (momentVO == null) {
-            return returnCallback(false, null, "找不到您要查看的动态信息");
-        }
-        return returnCallback(true, momentVO, null);
-    }
+//    /**
+//     * 获得动态信息
+//     *
+//     * @param token
+//     * @param momentId
+//     * @return
+//     */
+//    @RequestMapping(value = "/getMomentById", method = {RequestMethod.GET, RequestMethod.POST})
+//    @ResponseBody
+//    public Callback getMomentById(String token, Integer momentId) {
+//        Integer userId = AppSessionHelper.getAppUserId(token);
+//        if (userId == null) {
+//            return returnCallback(false, null, "您还未登录，请您先登录!");
+//        }
+//        Moment momentVO = momentService.getMomentById(momentId);
+//        if (momentVO == null) {
+//            return returnCallback(false, null, "找不到您要查看的动态信息");
+//        }
+//        return returnCallback(true, momentVO, null);
+//    }
 
     /**
      * 获得好友最新动态信息
@@ -139,14 +140,14 @@ public class MomentController extends BaseController {
      * @param token
      * @return
      */
-    @RequestMapping(value = "/getNewestMoment", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/getFriendsNewestMoment", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback getMomentById(String token) {
+    public Callback getFriendsNewestMoment(String token, Integer someOneId) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
-        Moment newestMomentVO = momentService.getNewestMoment(userId);
+        Moment newestMomentVO = momentService.getFriendsNewestMoment(userId);
         return returnCallback(true, newestMomentVO, null);
     }
 
@@ -156,34 +157,73 @@ public class MomentController extends BaseController {
      * @param token
      * @param minId
      * @param maxId
+     * @param pageSize
      * @return
      */
     @RequestMapping(value = "/listNewestMoments", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback listNewestMoments(String token, Integer minId, Integer maxId) {
+    public Callback listNewestMoments(String token, Integer minId, Integer maxId, Integer pageSize) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         //minId：上拉加载更多，maxId下拉刷新，加载新数据
-        if (minId != null && maxId != null || maxId == null && minId == null) {
+        if (minId != null && maxId != null || pageSize == null && minId == null && maxId == null) {
             return returnCallback(false, null, "参数配置错误！");
+        }
+        List<Moment> resultMomentListVO = new ArrayList<Moment>();
+        if (maxId == null && minId == null && pageSize != null) {
+            //当minId,maxId都为空的时间请求pageSize条数据
+            Moment momentQry = new Moment();
+            momentQry.setUserId(userId);
+            momentQry.setMinId(pageSize + 1);
+            resultMomentListVO = momentService.listNewestMoments(momentQry);
         }
         if (maxId != null) {
             Moment momentQry = new Moment();
             momentQry.setUserId(userId);
             momentQry.setMaxId(maxId);
-            List<Moment> newestMomentListVO = momentService.listNewestMoments(momentQry);
-            return returnCallback(true, newestMomentListVO, null);
+            resultMomentListVO = momentService.listNewestMoments(momentQry);
         }
         if (minId != null) {
             Moment momentQry = new Moment();
             momentQry.setUserId(userId);
             momentQry.setMinId(minId);
-            List<Moment> moreMomentListVO = momentService.listMoreMoments(momentQry);
-            return returnCallback(true, moreMomentListVO, null);
+            resultMomentListVO = momentService.listMoreMoments(momentQry);
         }
-        return returnCallback(false, null, "参数配置错误!");
+        for (Moment moment : resultMomentListVO) {
+            List<Comment> commentList = commentService.listCommentsByMomentId(moment.getId());
+            List<Approve> approveList = approveService.listApprovesByMomentId(moment.getId());
+            Approve approveQry = new Approve();
+            approveQry.setMomentId(moment.getId());
+            approveQry.setUserId(userId);
+            approveQry.setStatus(MomentConsts.SHOW_MODEL);
+            Boolean isApproved = approveService.isApprove(approveQry);
+
+            moment.setCommentList(commentList);
+            moment.setApproveList(approveList);
+            moment.setApproved(isApproved);
+        }
+
+        return returnCallback(true, resultMomentListVO, null);
+    }
+
+    /**
+     * 查看某个人的动态
+     */
+    @RequestMapping(value = "/listSomeOneMoments", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback listSomeOneMoments(String token, Integer someOneId) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback(false, null, "您还未登录，请您先登录!");
+        }
+        User someOne = userService.getByUserId(someOneId);
+        if (someOne == null) {
+            return returnCallback(false, null, "找不到您要查看的用户!");
+        }
+        List<Moment> momentList = momentService.listUserMomentByUserId(userId);
+        return returnCallback(true, momentList, null);
     }
 
     /**
@@ -289,25 +329,51 @@ public class MomentController extends BaseController {
 
     /**
      * 回复好友评论
+     *
+     * @param token
+     * @param commentId
+     * @param comment
+     * @return
      */
     @RequestMapping(value = "/replyComment", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback replyComment(String token, Integer commentId) {
+    public Callback replyComment(String token, Integer commentId, Comment comment) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
-        Comment comment = commentService.getCommentById(commentId);
-        if (comment == null) {
+        Comment commentDO = commentService.getCommentById(commentId);
+        if (commentDO == null) {
             return returnCallback(false, null, "找不到要删除的评论!");
         }
-        commentService.deleteById(commentId);
-        return returnCallback(true, "删除成功！", null);
+        comment.setRepliedUserId(userId);
+        comment.setGmtCreate(new Date());
+        comment.setStatus(CommentConsts.NORMAL_MODEL);
+        commentService.replyComment(comment);
+        return returnCallback(true, "回复成功！", null);
     }
-
 
     /**
      * 删除回复好友评论
+     *
+     * @param token
+     * @param commentId
+     * @return
      */
+    @RequestMapping(value = "/deleteReplyComment", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback deleteReplyComment(String token, Integer commentId) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback(false, null, "您还未登录，请您先登录!");
+        }
+        Comment commentDO = commentService.getCommentById(commentId);
+        if (commentDO == null) {
+            return returnCallback(false, null, "找不到要删除的评论!");
+        }
+        commentService.deleteReplyComment(commentId);
+        return returnCallback(true, "删除成功！", null);
+    }
+
 
 }

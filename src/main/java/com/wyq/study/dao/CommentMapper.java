@@ -2,6 +2,8 @@ package com.wyq.study.dao;
 
 import com.wyq.study.pojo.Comment;
 
+import java.util.List;
+
 public interface CommentMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -16,4 +18,6 @@ public interface CommentMapper {
     int updateByPrimaryKey(Comment record);
 
     void deleteComment(Comment commentDO);
+
+    List<Comment> listCommentsByMomentId(Integer id);
 }

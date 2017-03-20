@@ -2,21 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wyq.study.dao.UserMapper">
     <resultMap id="BaseResultMap" type="com.wyq.study.pojo.User">
-        <id column="id" property="id" jdbcType="INTEGER"/>
-        <result column="username" property="username" jdbcType="VARCHAR"/>
-        <result column="password" property="password" jdbcType="VARCHAR"/>
-        <result column="rank" property="rank" jdbcType="INTEGER"/>
-        <result column="profile" property="profile" jdbcType="VARCHAR"/>
-        <result column="sex" property="sex" jdbcType="VARCHAR"/>
-        <result column="height" property="height" jdbcType="DOUBLE"/>
-        <result column="weight" property="weight" jdbcType="DOUBLE"/>
-        <result column="birthday" property="birthday" jdbcType="TIMESTAMP"/>
-        <result column="location" property="location" jdbcType="VARCHAR"/>
-        <result column="community_id" property="communityId" jdbcType="INTEGER"/>
-        <result column="total_run_id" property="totalRunId" jdbcType="INTEGER"/>
-        <result column="best_run_id" property="bestRunId" jdbcType="INTEGER"/>
-        <result column="signature" property="signature" jdbcType="VARCHAR"/>
-        <result column="age" property="age" jdbcType="INTEGER"/>
+            <id column="id" property="id" jdbcType="INTEGER"/>
+            <result column="username" property="username" jdbcType="VARCHAR"/>
+            <result column="password" property="password" jdbcType="VARCHAR"/>
+            <result column="rank" property="rank" jdbcType="INTEGER"/>
+            <result column="profile" property="profile" jdbcType="VARCHAR"/>
+            <result column="sex" property="sex" jdbcType="VARCHAR"/>
+            <result column="height" property="height" jdbcType="DOUBLE"/>
+            <result column="weight" property="weight" jdbcType="DOUBLE"/>
+            <result column="birthday" property="birthday" jdbcType="TIMESTAMP"/>
+            <result column="location" property="location" jdbcType="VARCHAR"/>
+            <result column="community_id" property="communityId" jdbcType="INTEGER"/>
+            <result column="total_run_id" property="totalRunId" jdbcType="INTEGER"/>
+            <result column="best_run_id" property="bestRunId" jdbcType="INTEGER"/>
+            <result column="signature" property="signature" jdbcType="VARCHAR"/>
+            <result column="age" property="age" jdbcType="INTEGER"/>
     </resultMap>
     <sql id="Base_Column_List">
     id, username, password, rank, profile, sex, height, weight, birthday, location, community_id,

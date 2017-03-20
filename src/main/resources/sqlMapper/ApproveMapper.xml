@@ -24,9 +24,22 @@
         from approve
         where id = #{id,jdbcType=INTEGER}
     </select>
+    <select id="getApprove" resultMap="BaseResultMap" parameterType="com.wyq.study.pojo.Approve">
+        select
+        <include refid="Base_Column_List"/>
+        from approve
+        where moment_id = #{momentId,jdbcType=INTEGER} and user_id = #{userId,jdbcType=INTEGER} and status = #{status,jdbcType=SMALLINT}
+        limit 0,1
+    </select>
     <select id="listApproveUser" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         SELECT *
         from user ur left join approve ae on ur.id = ae.user_id
+        where moment_id = #{momentId,jdbcType=INTEGER}
+        order by gmt_create asc
+    </select>
+    <select id="listApprovesByMomentId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT *
+        from approve ae left join user ur on  ae.user_id = ur.id
         where moment_id = #{momentId,jdbcType=INTEGER}
         order by gmt_create asc
     </select>

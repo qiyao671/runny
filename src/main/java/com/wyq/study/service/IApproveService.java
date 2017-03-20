@@ -22,4 +22,7 @@ public interface IApproveService {
 
     List<User> listApproveUser(Integer momentId);
 
+    List<Approve> listApprovesByMomentId(Integer id);
+
+    Boolean isApprove(Approve approveQry);
 }

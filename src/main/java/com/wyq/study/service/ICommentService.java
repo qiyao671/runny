@@ -2,6 +2,8 @@ package com.wyq.study.service;
 
 import com.wyq.study.pojo.Comment;
 
+import java.util.List;
+
 /**
  * ${DESCRIPTION}
  * 模块名称：study
@@ -19,4 +21,10 @@ public interface ICommentService {
     void deleteById(Integer commentId);
 
     void deleteComment(Integer userId, Integer momentId);
+
+    List<Comment> listCommentsByMomentId(Integer id);
+
+    void replyComment(Comment comment);
+
+    void deleteReplyComment(Integer commentId);
 }

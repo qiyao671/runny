@@ -47,4 +47,19 @@ public class ApproveServiceImpl implements IApproveService {
         }
         return userList;
     }
+
+    @Override
+    public List<Approve> listApprovesByMomentId(Integer id) {
+        return approveMapper.listApprovesByMomentId(id);
+    }
+
+    @Override
+    public Boolean isApprove(Approve approveQry) {
+        Boolean isApprove = false;
+        Approve approve = approveMapper.getApprove(approveQry);
+        if (approve != null) {
+            isApprove = true;
+        }
+        return isApprove;
+    }
 }

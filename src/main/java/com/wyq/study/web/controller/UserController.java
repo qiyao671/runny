@@ -114,6 +114,32 @@ public class UserController extends BaseController {
     }
 
     /**
+     * 获得个人信息,没someOneId返回自己的信息
+     *
+     * @param token
+     * @param someOneId
+     * @return
+     */
+    @RequestMapping(value = "/getUserInfoById", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback getUserInfoById(String token, Integer someOneId) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback(false, null, "您还未登录，请您先登录!");
+        }
+        if (someOneId == null) {
+            User userVO = userService.getByUserId(userId);
+            return returnCallback(true, userVO, null);
+        } else {
+            User someOneVO = userService.getByUserId(someOneId);
+            if (someOneVO == null) {
+                return returnCallback(false, null, "用户信息获取失败！");
+            }
+            return returnCallback(true, someOneVO, null);
+        }
+    }
+
+    /**
      * 修改用户信息
      *
      * @param user

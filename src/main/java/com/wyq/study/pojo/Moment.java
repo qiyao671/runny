@@ -1,6 +1,7 @@
 package com.wyq.study.pojo;
 
 import java.util.Date;
+import java.util.List;
 
 public class Moment {
     private Integer id;
@@ -27,6 +28,13 @@ public class Moment {
     private Integer num;
 
     private Integer pageSize;
+
+    /*是否点赞了*/
+    private Boolean isApproved;
+
+    private List<Comment> commentList;
+
+    private List<Approve> approveList;
 
     public Integer getId() {
         return id;
@@ -122,5 +130,29 @@ public class Moment {
 
     public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public List<Comment> getCommentList() {
+        return commentList;
+    }
+
+    public void setCommentList(List<Comment> commentList) {
+        this.commentList = commentList;
+    }
+
+    public List<Approve> getApproveList() {
+        return approveList;
+    }
+
+    public void setApproveList(List<Approve> approveList) {
+        this.approveList = approveList;
+    }
+
+    public Boolean getApproved() {
+        return isApproved;
+    }
+
+    public void setApproved(Boolean approved) {
+        isApproved = approved;
     }
 }

@@ -19,7 +19,7 @@ public interface MomentMapper {
 
     int updateByPrimaryKey(Moment record);
 
-    Moment getNewestMoment(Integer userId);
+    Moment getFriendsNewestMoment(Integer userId);
 
     List<Moment> listNewestMoments(Moment moment);
 
@@ -27,4 +27,5 @@ public interface MomentMapper {
 
     List<Moment> listMoreMoments(Moment momentQry);
 
+    List<Moment> listUserMomentByUserId(Integer userId);
 }

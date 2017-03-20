@@ -46,8 +46,8 @@ public class MomentServiceImpl implements IMomentService {
     }
 
     @Override
-    public Moment getNewestMoment(Integer userId) {
-        return momentMapper.getNewestMoment(userId);
+    public Moment getFriendsNewestMoment(Integer userId) {
+        return momentMapper.getFriendsNewestMoment(userId);
     }
 
     @Override
@@ -59,6 +59,12 @@ public class MomentServiceImpl implements IMomentService {
     public List<Moment> listMoreMoments(Moment momentQry) {
         return momentMapper.listMoreMoments(momentQry);
     }
+
+    @Override
+    public List<Moment> listUserMomentByUserId(Integer userId) {
+        return momentMapper.listUserMomentByUserId(userId);
+    }
+
 
 
 }
