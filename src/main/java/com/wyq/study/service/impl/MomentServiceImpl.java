@@ -65,6 +65,10 @@ public class MomentServiceImpl implements IMomentService {
         return momentMapper.listUserMomentByUserId(userId);
     }
 
+    @Override
+    public List<Moment> listUserMoments(Moment momentQry) {
+        return momentMapper.listUserMoments(momentQry);
+    }
 
 
 }

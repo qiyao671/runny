@@ -27,14 +27,22 @@
         from moment
         where id = #{id,jdbcType=INTEGER}
     </select>
-    <select id="getFriendsNewestMoment" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+    <select id="listUserMoments" resultMap="ResultMapWithBLOBs" parameterType="com.wyq.study.pojo.Moment">
         select
         <include refid="Base_Column_List"/>
         ,
         <include refid="Blob_Column_List"/>
         from moment
-        where user_id = #{userId,jdbcType=INTEGER}
-        order by gmt_create desc limit 0,1
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="maxId != null and maxId!=''">
+                AND id > #{maxId,jdbcType=INTEGER}
+            </if>
+            <if test="minId != null and minId!=''">
+                AND id <![CDATA[<]]> #{minId,jdbcType=INTEGER}
+            </if>
+            AND user_id = #{userId,jdbcType=INTEGER}
+        </trim>
+        order by gmt_create desc
     </select>
     <select id="listPageMoments" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
         select

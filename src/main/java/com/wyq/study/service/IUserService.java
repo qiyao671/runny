@@ -1,6 +1,5 @@
 package com.wyq.study.service;
 
-import com.github.pagehelper.PageInfo;
 import com.wyq.study.pojo.User;
 
 import java.util.List;
@@ -20,7 +19,7 @@ public interface IUserService {
     User getByUserId(Integer userId);
 
 
-    PageInfo listFriends(Integer userId, Integer num, Integer pageSize);
+    List<User> listFriends(Integer userId);
 
     List<User> listUsersByUserNameLike(User user);
 

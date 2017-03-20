@@ -21,6 +21,8 @@ public class RunnyLog {
 
     private Double altitude;
 
+    private Date startRunTime;
+
     /*非数据库字段*/
     private Double totalDistance;
 
@@ -192,5 +194,13 @@ public class RunnyLog {
 
     public void setAltitude(Double altitude) {
         this.altitude = altitude;
+    }
+
+    public Date getStartRunTime() {
+        return startRunTime;
+    }
+
+    public void setStartRunTime(Date startRunTime) {
+        this.startRunTime = startRunTime;
     }
 }

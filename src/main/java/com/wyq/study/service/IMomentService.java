@@ -30,4 +30,6 @@ public interface IMomentService {
     List<Moment> listMoreMoments(Moment momentQry);
 
     List<Moment> listUserMomentByUserId(Integer userId);
+
+    List<Moment> listUserMoments(Moment momentQry);
 }

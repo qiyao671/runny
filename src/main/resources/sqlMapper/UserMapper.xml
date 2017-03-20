@@ -2,31 +2,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wyq.study.dao.UserMapper">
     <resultMap id="BaseResultMap" type="com.wyq.study.pojo.User">
-            <id column="id" property="id" jdbcType="INTEGER"/>
-            <result column="username" property="username" jdbcType="VARCHAR"/>
-            <result column="password" property="password" jdbcType="VARCHAR"/>
-            <result column="rank" property="rank" jdbcType="INTEGER"/>
-            <result column="profile" property="profile" jdbcType="VARCHAR"/>
-            <result column="sex" property="sex" jdbcType="VARCHAR"/>
-            <result column="height" property="height" jdbcType="DOUBLE"/>
-            <result column="weight" property="weight" jdbcType="DOUBLE"/>
-            <result column="birthday" property="birthday" jdbcType="TIMESTAMP"/>
-            <result column="location" property="location" jdbcType="VARCHAR"/>
-            <result column="community_id" property="communityId" jdbcType="INTEGER"/>
-            <result column="total_run_id" property="totalRunId" jdbcType="INTEGER"/>
-            <result column="best_run_id" property="bestRunId" jdbcType="INTEGER"/>
-            <result column="signature" property="signature" jdbcType="VARCHAR"/>
-            <result column="age" property="age" jdbcType="INTEGER"/>
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="rank" property="rank" jdbcType="INTEGER"/>
+        <result column="profile" property="profile" jdbcType="VARCHAR"/>
+        <result column="sex" property="sex" jdbcType="VARCHAR"/>
+        <result column="height" property="height" jdbcType="DOUBLE"/>
+        <result column="weight" property="weight" jdbcType="DOUBLE"/>
+        <result column="birthday" property="birthday" jdbcType="TIMESTAMP"/>
+        <result column="location" property="location" jdbcType="VARCHAR"/>
+        <result column="signature" property="signature" jdbcType="VARCHAR"/>
+        <result column="age" property="age" jdbcType="INTEGER"/>
+        <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP"/>
+        <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, username, password, rank, profile, sex, height, weight, birthday, location, community_id,
-    total_run_id, best_run_id, signature, age
+    id, username, password, rank, profile, sex, height, weight, birthday, location, signature, age, gmt_create, gmt_modified
   </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
         from user
         where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="getFriendByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where user_id = #{userId,jdbcType=INTEGER}
     </select>
     <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
@@ -45,7 +49,7 @@
         from user
         <trim prefix="WHERE" prefixOverrides="AND |OR">
             <if test="username != null and username!=''">
-            username like '%${username}%'
+                username like '%${username}%'
             </if>
         </trim>
     </select>
@@ -57,13 +61,12 @@
     insert into user (id, username, password, 
       rank, profile, sex, 
       height, weight, birthday, 
-      location, community_id, total_run_id, 
-      best_run_id, signature, age)
-    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      location, signature, age, gmt_create, gmt_modified)
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
       #{rank,jdbcType=INTEGER}, #{profile,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
       #{height,jdbcType=DOUBLE}, #{weight,jdbcType=DOUBLE}, #{birthday,jdbcType=TIMESTAMP}, 
-      #{location,jdbcType=VARCHAR}, #{communityId,jdbcType=INTEGER}, #{totalRunId,jdbcType=INTEGER}, 
-      #{bestRunId,jdbcType=INTEGER}, #{signature,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER})
+      #{location,jdbcType=VARCHAR}, #{signature,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER}, #{gmtCreate,jdbcType=TIMESTAMP},
+      #{gmtModified,jdbcType=TIMESTAMP})
   </insert>
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.wyq.study.pojo.User">
         insert into user
@@ -98,20 +101,17 @@
             <if test="location != null">
                 location,
             </if>
-            <if test="communityId != null">
-                community_id,
-            </if>
-            <if test="totalRunId != null">
-                total_run_id,
-            </if>
-            <if test="bestRunId != null">
-                best_run_id,
-            </if>
             <if test="signature != null">
                 signature,
             </if>
             <if test="age != null">
                 age,
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create,
+            </if>
+            <if test="gmtModified != null">
+                gmt_modified,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -145,20 +145,18 @@
             <if test="location != null">
                 #{location,jdbcType=VARCHAR},
             </if>
-            <if test="communityId != null">
-                #{communityId,jdbcType=INTEGER},
-            </if>
-            <if test="totalRunId != null">
-                #{totalRunId,jdbcType=INTEGER},
-            </if>
-            <if test="bestRunId != null">
-                #{bestRunId,jdbcType=INTEGER},
-            </if>
             <if test="signature != null">
                 #{signature,jdbcType=VARCHAR},
             </if>
             <if test="age != null">
                 #{age,jdbcType=INTEGER},
+            </if>
+            <if test="gmtCreate != null">
+                #{gmtCreate,jdbcType=TIMESTAMP},
+
+            </if>
+            <if test="gmtModified != null">
+                #{gmtModified,jdbcType=TIMESTAMP})
             </if>
         </trim>
     </insert>
@@ -192,20 +190,17 @@
             <if test="location != null">
                 location = #{location,jdbcType=VARCHAR},
             </if>
-            <if test="communityId != null">
-                community_id = #{communityId,jdbcType=INTEGER},
-            </if>
-            <if test="totalRunId != null">
-                total_run_id = #{totalRunId,jdbcType=INTEGER},
-            </if>
-            <if test="bestRunId != null">
-                best_run_id = #{bestRunId,jdbcType=INTEGER},
-            </if>
             <if test="signature != null">
                 signature = #{signature,jdbcType=VARCHAR},
             </if>
             <if test="age != null">
-                #{age,jdbcType=INTEGER},
+                age = #{age,jdbcType=INTEGER},
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="age != null">
+                gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
@@ -221,11 +216,10 @@
       weight = #{weight,jdbcType=DOUBLE},
       birthday = #{birthday,jdbcType=TIMESTAMP},
       location = #{location,jdbcType=VARCHAR},
-      community_id = #{communityId,jdbcType=INTEGER},
-      total_run_id = #{totalRunId,jdbcType=INTEGER},
-      best_run_id = #{bestRunId,jdbcType=INTEGER},
       signature = #{signature,jdbcType=VARCHAR},
       age = #{age,jdbcType=VARCHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

@@ -29,17 +29,13 @@ public class UserServiceImplTest {
     @Test
     public void insert() throws Exception {
         User user = new User();
-        user.setBestRunId(11);
         user.setBirthday(new Date());
-        user.setCommunityId(12);
         user.setHeight(180.0);
         user.setLocation("浙江省宁波市鄞州区");
         user.setPassword("123456");
         user.setProfile("https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=4225565668,46745471&fm=80&w=179&h=119&img.JPEG");
-        user.setBestRunId(13);
         user.setRank(2);
         user.setSex("女");
-        user.setTotalRunId(3);
         user.setUsername("xiaohong");
         user.setWeight(98.5);
         userService.insert(user);

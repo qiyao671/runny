@@ -15,4 +15,6 @@ public interface IFriendService {
     int saveFriend(Friend friend);
 
     void deleteFriend(Integer userId, Integer friendUserId);
+
+    Friend getFriendByUserId(Integer friendUserId);
 }

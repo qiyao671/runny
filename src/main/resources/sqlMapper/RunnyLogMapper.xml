@@ -11,9 +11,10 @@
         <result column="picture" property="picture" jdbcType="VARCHAR"/>
         <result column="moment_content" property="momentContent" jdbcType="VARCHAR"/>
         <result column="altitude" property="altitude" jdbcType="DOUBLE"/>
+        <result column="start_run_time" property="startRunTime" jdbcType="TIMESTAMP"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, user_id, distance, spend_time, energy, create_time, picture, moment_content, altitude
+    id, user_id, distance, spend_time, energy, create_time, picture, moment_content, altitude, start_run_time
   </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
@@ -32,7 +33,7 @@
         from runny_log
         <trim prefix="WHERE" prefixOverrides="AND |OR">
             <if test="maxDistance != null and maxDistance!=''">
-            AND distance <![CDATA[<]]>= #{maxDistance,jdbcType=DOUBLE}
+                AND distance <![CDATA[<]]>= #{maxDistance,jdbcType=DOUBLE}
             </if>
             <if test="minDistance != null and minDistance!=''">
                 AND distance >= #{minDistance,jdbcType=DOUBLE}
@@ -93,10 +94,10 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wyq.study.pojo.RunnyLog">
     insert into runny_log (id, user_id, distance, 
       spend_time, energy, create_time, 
-      picture, moment_content, altitude)
-    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{distance,jdbcType=DOUBLE}, 
+      picture, moment_content, altitude, start_run_time)
+        values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{distance,jdbcType=DOUBLE},
       #{spendTime,jdbcType=DOUBLE}, #{energy,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{picture,jdbcType=VARCHAR}, #{momentContent,jdbcType=VARCHAR}, #{altitude,jdbcType=DOUBLE})
+      #{picture,jdbcType=VARCHAR}, #{momentContent,jdbcType=VARCHAR}, #{altitude,jdbcType=DOUBLE}, #{startRunTime,jdbcType=TIMESTAMP})
   </insert>
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.wyq.study.pojo.RunnyLog">
         insert into runny_log
@@ -128,6 +129,9 @@
             <if test="momentContent != null">
                 altitude,
             </if>
+            <if test="startRunTime != null">
+                start_run_time,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -156,6 +160,9 @@
             </if>
             <if test="altitude != null">
                 #{altitude,jdbcType=DOUBLE}
+            </if>
+            <if test="startRunTime != null">
+                #{startRunTime,jdbcType=TIMESTAMP}
             </if>
         </trim>
     </insert>
@@ -186,6 +193,9 @@
             <if test="altitude != null">
                 altitude = #{altitude,jdbcType=DOUBLE},
             </if>
+            <if test="startRunTime != null">
+                start_run_time =  #{startRunTime,jdbcType=TIMESTAMP},
+            </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -198,7 +208,8 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       picture = #{picture,jdbcType=VARCHAR},
       moment_content = #{momentContent,jdbcType=VARCHAR},
-      altitude = #{altitude,jdbcType=DOUBLE}
+      altitude = #{altitude,jdbcType=DOUBLE},
+      start_run_time =  #{startRunTime,jdbcType=TIMESTAMP},
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

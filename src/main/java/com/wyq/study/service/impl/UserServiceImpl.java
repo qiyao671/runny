@@ -1,7 +1,5 @@
 package com.wyq.study.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.wyq.study.dao.UserMapper;
 import com.wyq.study.pojo.User;
 import com.wyq.study.service.IUserService;
@@ -66,16 +64,13 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public PageInfo listFriends(Integer userId, Integer num, Integer pageSize) {
-        PageHelper.startPage(num, pageSize);
-        List<User> userList = userMapper.listFriendsByUserId(userId);
-        PageInfo pageInfo = new PageInfo(userList);
-        return pageInfo;
+    public List<User> listFriends(Integer userId) {
+        return userMapper.listFriendsByUserId(userId);
     }
 
     @Override
     public List<User> listUsersByUserNameLike(User user) {
-         return userMapper.listUsersByUserNameLike(user);
+        return userMapper.listUsersByUserNameLike(user);
     }
 
 }

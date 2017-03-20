@@ -25,15 +25,13 @@ public class User {
 
     private String location;
 
-    private Integer communityId;
-
-    private Integer totalRunId;
-
-    private Integer bestRunId;
-
     private String signature;
 
     private Integer age;
+
+    private Date gmtCreate;
+
+    private Date gmtModified;
 
     public Integer getId() {
         return id;
@@ -115,30 +113,6 @@ public class User {
         this.location = location == null ? null : location.trim();
     }
 
-    public Integer getCommunityId() {
-        return communityId;
-    }
-
-    public void setCommunityId(Integer communityId) {
-        this.communityId = communityId;
-    }
-
-    public Integer getTotalRunId() {
-        return totalRunId;
-    }
-
-    public void setTotalRunId(Integer totalRunId) {
-        this.totalRunId = totalRunId;
-    }
-
-    public Integer getBestRunId() {
-        return bestRunId;
-    }
-
-    public void setBestRunId(Integer bestRunId) {
-        this.bestRunId = bestRunId;
-    }
-
     public String getSignature() {
         return signature;
     }
@@ -162,5 +136,21 @@ public class User {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public Date getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
+
+    public Date getGmtModified() {
+        return gmtModified;
+    }
+
+    public void setGmtModified(Date gmtModified) {
+        this.gmtModified = gmtModified;
     }
 }

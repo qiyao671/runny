@@ -135,20 +135,59 @@ public class MomentController extends BaseController {
 //    }
 
     /**
-     * 获得好友最新动态信息
+     * 获得某个好友动态列表
      *
      * @param token
      * @return
      */
-    @RequestMapping(value = "/getFriendsNewestMoment", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/listUserMoments", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback getFriendsNewestMoment(String token, Integer someOneId) {
+    public Callback listUserMoments(String token, Integer someOneId, Integer minId, Integer maxId, Integer pageSize) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
-        Moment newestMomentVO = momentService.getFriendsNewestMoment(userId);
-        return returnCallback(true, newestMomentVO, null);
+        //minId：上拉加载更多，maxId下拉刷新，加载新数据
+        if (minId != null && maxId != null || pageSize == null && minId == null && maxId == null) {
+            return returnCallback(false, null, "参数配置错误！");
+        }
+        List<Moment> resultMomentListVO = new ArrayList<Moment>();
+        if (someOneId == null) {
+            someOneId = userId;
+        }
+        if (maxId == null && minId == null && pageSize != null) {
+            //当minId,maxId都为空的时间请求pageSize条数据
+            Moment momentQry = new Moment();
+            momentQry.setUserId(someOneId);
+            momentQry.setMinId(pageSize + 1);
+            resultMomentListVO = momentService.listUserMoments(momentQry);
+        }
+        if (maxId != null) {
+            Moment momentQry = new Moment();
+            momentQry.setUserId(someOneId);
+            momentQry.setMaxId(maxId);
+            resultMomentListVO = momentService.listUserMoments(momentQry);
+        }
+        if (minId != null) {
+            Moment momentQry = new Moment();
+            momentQry.setUserId(someOneId);
+            momentQry.setMinId(minId);
+            resultMomentListVO = momentService.listUserMoments(momentQry);
+        }
+        for (Moment moment : resultMomentListVO) {
+            List<Comment> commentList = commentService.listCommentsByMomentId(moment.getId());
+            List<Approve> approveList = approveService.listApprovesByMomentId(moment.getId());
+            Approve approveQry = new Approve();
+            approveQry.setMomentId(moment.getId());
+            approveQry.setUserId(userId);
+            approveQry.setStatus(MomentConsts.SHOW_MODEL);
+            Boolean isApproved = approveService.isApprove(approveQry);
+
+            moment.setCommentList(commentList);
+            moment.setApproveList(approveList);
+            moment.setApproved(isApproved);
+        }
+        return returnCallback(true, resultMomentListVO, null);
     }
 
     /**

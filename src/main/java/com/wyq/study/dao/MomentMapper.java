@@ -28,4 +28,6 @@ public interface MomentMapper {
     List<Moment> listMoreMoments(Moment momentQry);
 
     List<Moment> listUserMomentByUserId(Integer userId);
+
+    List<Moment> listUserMoments(Moment moment);
 }

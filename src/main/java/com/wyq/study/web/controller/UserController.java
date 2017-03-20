@@ -1,6 +1,6 @@
 package com.wyq.study.web.controller;
 
-import com.github.pagehelper.PageInfo;
+import com.wyq.study.constant.FriendConsts;
 import com.wyq.study.pojo.Callback;
 import com.wyq.study.pojo.Friend;
 import com.wyq.study.pojo.User;
@@ -18,11 +18,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
- * Created by wangyiqiang on 16/6/1.
+ * 用户接口
  */
 @Controller
 @RequestMapping("/user")
@@ -33,6 +34,8 @@ public class UserController extends BaseController {
     private IFriendService friendService;
 
     /**
+     * 用户登录，返回token
+     *
      * @param user
      * @return
      * @throws UnsupportedEncodingException
@@ -62,6 +65,14 @@ public class UserController extends BaseController {
         return returnCallback(false, null, "用户密码不正确,请重新输入");
     }
 
+    /**
+     * 注册新用户
+     *
+     * @param user
+     * @return
+     * @throws UnsupportedEncodingException
+     * @throws NoSuchAlgorithmException
+     */
     @RequestMapping(value = "/add", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public Callback addUser(User user) throws UnsupportedEncodingException, NoSuchAlgorithmException {
@@ -84,33 +95,13 @@ public class UserController extends BaseController {
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             String encryptedPwd = MD5.getEncryptedPwd(user.getPassword());
             user.setPassword(encryptedPwd);
+            user.setGmtCreate(new Date());
             Integer userId = userService.insert(user);
             String token = AppSessionHelper.getUserSession(userId);
             return returnCallback(true, token, null);
         }
 
         return returnCallback(false, null, "用户注册失败!");
-    }
-
-    /**
-     * 获得个人信息
-     *
-     * @param token
-     * @return
-     */
-    @RequestMapping(value = "/getUserInfo", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Callback getUserInfo(String token) {
-        Integer userId = AppSessionHelper.getAppUserId(token);
-        if (userId == null) {
-            return returnCallback(false, null, "您还未登录，请您先登录!");
-        }
-        User userVO = userService.getByUserId(userId);
-        if (userVO != null) {
-            return returnCallback(true, userVO, null);
-        }
-
-        return returnCallback(false, null, "用户信息获取失败！");
     }
 
     /**
@@ -139,6 +130,7 @@ public class UserController extends BaseController {
         }
     }
 
+
     /**
      * 修改用户信息
      *
@@ -160,6 +152,7 @@ public class UserController extends BaseController {
         if (resultMsg != null) {
             return returnCallback(false, null, resultMsg);
         }
+        user.setGmtModified(new Date());
         userService.updateUser(user);
 
         return returnCallback(true, "您的信息修改很成功!", null);
@@ -169,26 +162,22 @@ public class UserController extends BaseController {
      * 返回好友列表
      *
      * @param token
-     * @param num
-     * @param pageSize
      * @return
      */
     @RequestMapping(value = "/listFriends", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback listFriends(String token, Integer num, Integer pageSize) {
+    public Callback listFriends(String token) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
-        if (num == null || pageSize == null) {
-            return returnCallback(false, null, "您的分页参数为空");
-        }
-        PageInfo pageInfo = userService.listFriends(userId, num, pageSize);
-        return returnCallback(true, pageInfo, null);
+        List<User> userList = userService.listFriends(userId);
+
+        return returnCallback(true, userList, null);
     }
 
     /**
-     * 关注(添加)好友
+     * 添加好友
      *
      * @param token
      * @param friendUserId
@@ -211,9 +200,39 @@ public class UserController extends BaseController {
         Friend friend = new Friend();
         friend.setUserId(userId);
         friend.setFriendId(friendUserId);
+        friend.setStatus(FriendConsts.ADD_FRIENDS);
         friend.setCreateTime(new Date());
         friendService.saveFriend(friend);
+
         return returnCallback(true, "添加好友成功！", null);
+    }
+
+    /**
+     * 同意添加 成为好友
+     *
+     * @param token
+     * @param friendUserId
+     * @return
+     */
+    @RequestMapping(value = "/agreeAddFriend", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback agreeAddFriend(String token, Integer friendUserId) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback(false, null, "您还未登录，请您先登录!");
+        }
+        if (friendUserId == null) {
+            return returnCallback(false, null, "请先选择您要添加的好友!");
+        }
+        Friend friend = friendService.getFriendByUserId(friendUserId);
+        if (friend == null) {
+            return returnCallback(false, null, "找不到这个好友请求，maybe是外星人加你!");
+        }
+        friend.setStatus(FriendConsts.HAS_BEEN_FRIENDS);
+        friend.setModifyTime(new Date());
+        friendService.saveFriend(friend);
+
+        return returnCallback(true, "同意添加好友！", null);
     }
 
     /**
@@ -238,9 +257,9 @@ public class UserController extends BaseController {
             return returnCallback(false, null, "找不到您要删除的好友！");
         }
         friendService.deleteFriend(userId, friendUserId);
+
         return returnCallback(true, "添加好友成功！", null);
     }
-
 
     /**
      * 通过用户名获取用户信息 --模糊搜索
@@ -263,14 +282,11 @@ public class UserController extends BaseController {
         userQV.setUsername(username);
         List<User> userVOList = userService.listUsersByUserNameLike(userQV);
         if (userVOList == null || userVOList.size() == 0) {
-            return returnCallback(false, null, "没有搜索到对应的结果!");
+            userVOList = new ArrayList<User>();
+            return returnCallback(true, userVOList, "没有搜索到对应的结果!");
         }
+
         return returnCallback(true, userVOList, null);
     }
-
-    /**
-     * 获得好友列表
-     */
-
 
 }
