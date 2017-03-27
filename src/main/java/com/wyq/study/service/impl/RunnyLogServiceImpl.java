@@ -47,7 +47,6 @@ public class RunnyLogServiceImpl implements IRunnyLogService {
     @Override
     public RunnyLog getFarthestLogInfo(Integer userId) {
         return runnyLogMapper.selectFarthestLogInfo(userId);
-
     }
 
     @Override
@@ -86,9 +85,10 @@ public class RunnyLogServiceImpl implements IRunnyLogService {
     }
 
     @Override
-    public PageInfo listTimeRank(Integer num, Integer pageSize, Date startTime, Date endTime) {
+    public PageInfo listTimeRank(Integer userId, Integer num, Integer pageSize, Date startTime, Date endTime) {
         PageHelper.startPage(num, pageSize);
         RunnyLog runnyLogDTO = new RunnyLog();
+        runnyLogDTO.setUserId(userId);
         runnyLogDTO.setBeginTime(startTime);
         runnyLogDTO.setEndTime(endTime);
         List<RunnyLog> timeRankList = runnyLogMapper.listTimeRank(runnyLogDTO);
@@ -103,6 +103,19 @@ public class RunnyLogServiceImpl implements IRunnyLogService {
     public int saveRunnyLog(RunnyLog runnyLog) {
         runnyLogMapper.insert(runnyLog);
         return runnyLog.getId();
+    }
+
+    @Override
+    public RunnyLog getTimeTotalLogInfo(RunnyLog runnyLog) {
+        return runnyLogMapper.getTimeTotalLogInfo(runnyLog);
+    }
+
+    @Override
+    public PageInfo listAllUserRunnyLogsByUserId(Integer userId, Integer num, Integer pageSize) {
+        PageHelper.startPage(num, pageSize);
+        List<RunnyLog> runnyLogs = runnyLogMapper.listMyAllRunnyLogs(userId);
+        PageInfo pageInfo = new PageInfo(runnyLogs);
+        return pageInfo;
     }
 
     public static void main(String args[]) {

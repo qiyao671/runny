@@ -33,6 +33,13 @@ public class User {
 
     private Date gmtModified;
 
+    /**
+     * 非数据库字段
+     */
+
+    /*是否是我的好友 是：1 不是：-1 我自己：2*/
+    private Integer relationStatus;
+
     public Integer getId() {
         return id;
     }
@@ -152,5 +159,13 @@ public class User {
 
     public void setGmtModified(Date gmtModified) {
         this.gmtModified = gmtModified;
+    }
+
+    public Integer getRelationStatus() {
+        return relationStatus;
+    }
+
+    public void setRelationStatus(Integer relationStatus) {
+        this.relationStatus = relationStatus;
     }
 }

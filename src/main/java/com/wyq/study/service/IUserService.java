@@ -23,4 +23,7 @@ public interface IUserService {
 
     List<User> listUsersByUserNameLike(User user);
 
+    List<Integer> listAllFriendIds(Integer userId);
+
+    Boolean isFriend(Integer userId, Integer friendId);
 }

@@ -2,6 +2,7 @@ package com.wyq.study.dao;
 
 import com.wyq.study.pojo.RunnyLog;
 import com.wyq.study.utils.AppSessionHelper;
+import com.xiaoleilu.hutool.date.DateUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -9,6 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -61,5 +63,12 @@ public class RunnyLogMapperTest {
         List<RunnyLog> runnyLogs = runnyLogMapper.listTotalRank(runnyLog);
     }
 
-
+    @Test
+    public void listTimeRankTest() throws Exception {
+        RunnyLog runnyLog = new RunnyLog();
+        runnyLog.setBeginTime(DateUtil.offsiteMonth(new Date(), -2));
+        runnyLog.setEndTime(new Date());
+        runnyLog.setUserId(2);
+        List<RunnyLog> runnyLogs = runnyLogMapper.listTimeRank(runnyLog);
+    }
 }

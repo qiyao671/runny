@@ -63,6 +63,12 @@ public class UserServiceImpl implements IUserService {
         return userMapper.selectByPrimaryKey(userId);
     }
 
+    /**
+     * 根据用户id 查出所有好友
+     *
+     * @param userId
+     * @return
+     */
     @Override
     public List<User> listFriends(Integer userId) {
         return userMapper.listFriendsByUserId(userId);
@@ -71,6 +77,32 @@ public class UserServiceImpl implements IUserService {
     @Override
     public List<User> listUsersByUserNameLike(User user) {
         return userMapper.listUsersByUserNameLike(user);
+    }
+
+    /**
+     * 根据用户id 查出所有好友的id
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<Integer> listAllFriendIds(Integer userId) {
+        return userMapper.listAllFriendIds(userId);
+    }
+
+    /**
+     * 判断该用户是否是我的好友
+     */
+    @Override
+    public Boolean isFriend(Integer userId,Integer friendId) {
+        Boolean isFriend = false;
+        List<Integer> ids = userMapper.listAllFriendIds(userId);
+        for (Integer fid : ids) {
+            if (fid == userId) {
+                isFriend = true;
+            }
+        }
+        return isFriend;
     }
 
 }

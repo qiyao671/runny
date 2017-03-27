@@ -37,19 +37,38 @@ public class RunnyLogController extends BaseController {
     private IRunnyLogService runnyLogService;
 
     /**
-     * 用户累计跑步记录
+     * 用户 累计总跑步记录 月累计跑步记录 周累计跑步记录
      *
+     * @param flag  1 , 2 , 3
      * @param token
      * @return
      */
     @RequestMapping(value = "/getTotalLogInfo", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback getTotalLogInfo(String token) {
+    public Callback getTotalLogInfo(String token, Integer flag) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
-        RunnyLog runnyLogVO = runnyLogService.getTotalLogInfo(userId);
+        RunnyLog runnyLogVO = null;
+        if (flag == 1) {
+            //累计总跑步记录
+            runnyLogVO = runnyLogService.getTotalLogInfo(userId);
+        } else if (flag == 2) {
+            //月累计跑步记录
+            RunnyLog runnyLogQry = new RunnyLog();
+            runnyLogQry.setUserId(userId);
+            runnyLogQry.setBeginTime(DateUtils.monthStartTime(new Date()));
+            runnyLogQry.setEndTime(DateUtils.monthEndTime(new Date()));
+            runnyLogVO = runnyLogService.getTimeTotalLogInfo(runnyLogQry);
+        } else if (flag == 3) {
+            //周累计跑步记录
+            RunnyLog runnyLogQry = new RunnyLog();
+            runnyLogQry.setUserId(userId);
+            runnyLogQry.setBeginTime(DateUtils.weekStartTime(new Date()));
+            runnyLogQry.setEndTime(DateUtils.weekEndTime(new Date()));
+            runnyLogVO = runnyLogService.getTimeTotalLogInfo(runnyLogQry);
+        }
         if (runnyLogVO == null) {
             return returnCallback(false, null, "查不到您的跑步记录!");
         }
@@ -129,7 +148,7 @@ public class RunnyLogController extends BaseController {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         if (num == null || pageSize == null) {
-            return returnCallback(false, null, "您的分页参数为空");
+            return returnCallback(false, null, "您的分页参数有误");
         }
         PageInfo pageInfo = runnyLogService.listTotalRank(num, pageSize);
         return returnCallback(true, pageInfo, null);
@@ -151,11 +170,11 @@ public class RunnyLogController extends BaseController {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         if (num == null || pageSize == null) {
-            return returnCallback(false, null, "您的分页参数为空");
+            return returnCallback(false, null, "您的分页参数有误");
         }
         Date beginMonth = DateUtils.monthStartTime(new Date());
         Date endMonth = DateUtils.monthEndTime(new Date());
-        PageInfo pageInfo = runnyLogService.listTimeRank(num, pageSize, beginMonth, endMonth);
+        PageInfo pageInfo = runnyLogService.listTimeRank(userId, num, pageSize, beginMonth, endMonth);
         return returnCallback(true, pageInfo, null);
     }
 
@@ -175,11 +194,11 @@ public class RunnyLogController extends BaseController {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         if (num == null || pageSize == null) {
-            return returnCallback(false, null, "您的分页参数为空");
+            return returnCallback(false, null, "您的分页参数有误");
         }
         Date beginWeek = DateUtils.weekStartTime(new Date());
         Date endWeek = DateUtils.weekEndTime(new Date());
-        PageInfo pageInfo = runnyLogService.listTimeRank(num, pageSize, beginWeek, endWeek);
+        PageInfo pageInfo = runnyLogService.listTimeRank(userId, num, pageSize, beginWeek, endWeek);
 
         return returnCallback(true, pageInfo, null);
     }
@@ -200,11 +219,11 @@ public class RunnyLogController extends BaseController {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
         if (num == null || pageSize == null) {
-            return returnCallback(false, null, "您的分页参数为空");
+            return returnCallback(false, null, "您的分页参数有误");
         }
         Date beginDay = DateUtil.beginOfDay(new Date());
         Date endDay = DateUtil.endOfDay(new Date());
-        PageInfo pageInfo = runnyLogService.listTimeRank(num, pageSize, beginDay, endDay);
+        PageInfo pageInfo = runnyLogService.listTimeRank(userId, num, pageSize, beginDay, endDay);
 
         return returnCallback(true, pageInfo, null);
     }
@@ -228,6 +247,23 @@ public class RunnyLogController extends BaseController {
         }
         runnyLogService.saveRunnyLog(runnyLog);
         return returnCallback(true, "记录成功！", null);
+    }
+
+    /**
+     * 我的所有跑步记录
+     */
+    @RequestMapping(value = "/listMyAllRunnyLogs", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback listMyAllRunnyLogs(String token, Integer num, Integer pageSize) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback(false, null, "您还未登录，请您先登录!");
+        }
+        if (num == null || pageSize == null) {
+            return returnCallback(false, null, "您的分页参数有误");
+        }
+        PageInfo pageInfo = runnyLogService.listAllUserRunnyLogsByUserId(userId, num, pageSize);
+        return returnCallback(true, pageInfo, null);
     }
 
 }

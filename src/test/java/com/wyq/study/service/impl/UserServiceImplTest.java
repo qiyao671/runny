@@ -49,4 +49,9 @@ public class UserServiceImplTest {
         userDO.setUsername("xiao");
         List<User> userList = userMapper.listUsersByUserNameLike(userDO);
     }
+
+    @Test
+    public void listAllFriendIdsTest() {
+        List<Integer> ids = userService.listAllFriendIds(3);
+    }
 }

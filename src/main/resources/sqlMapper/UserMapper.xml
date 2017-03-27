@@ -41,7 +41,15 @@
     <select id="listFriendsByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
-        from user WHERE id in (SELECT friend_id from user u,friend f WHERE u.id = f.user_id AND u.id = #{id,jdbcType=INTEGER})
+        from user WHERE id in (SELECT user_id from user u,friend f WHERE u.id = f.friend_id  AND u.id = #{id,jdbcType=INTEGER})
+        or id in (SELECT friend_id from user u,friend f WHERE u.id = f.user_id AND u.id = #{id,jdbcType=INTEGER})
+        order by id ASC
+    </select>
+    <select id="listAllFriendIds" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select id
+        from user WHERE id in (SELECT user_id from user u,friend f WHERE u.id = f.friend_id  AND u.id = #{id,jdbcType=INTEGER} AND status = 1)
+        or id in (SELECT friend_id from user u,friend f WHERE u.id = f.user_id AND u.id = #{id,jdbcType=INTEGER} AND status = 1)
+        order by id ASC
     </select>
     <select id="listUsersByUserNameLike" resultMap="BaseResultMap" parameterType="com.wyq.study.pojo.User">
         select

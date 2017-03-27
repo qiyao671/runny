@@ -19,4 +19,8 @@ public class FriendConsts {
     //拒绝成为好友
     public final static int REJECT_TO_BE_FRIENDS = -1;
 
+    //是我自己
+    public final static int IS_MYSELF = 2;
+
+
 }

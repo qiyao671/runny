@@ -1,5 +1,11 @@
 <!doctype html>
 
-       <div>Runny App</div>
+<div>Runny App</div>
+<form action="/user/uploadFile" method="post" enctype="multipart/form-data">
+    用户名 <input type="text" name="username"/><br/>
+    token <input type="text" name="token"/><br/>
+    上传文件 <input type="file" name="file"/><br/>
+    <input type="submit" name="submit" value="提交"/>
+</form>
 
 #parse("head/footer.vm")

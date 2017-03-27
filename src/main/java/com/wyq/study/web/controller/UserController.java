@@ -9,17 +9,26 @@ import com.wyq.study.service.IUserService;
 import com.wyq.study.utils.AppSessionHelper;
 import com.wyq.study.utils.DateUtils;
 import com.wyq.study.utils.MD5;
+import com.xiaoleilu.hutool.io.FileUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -105,7 +114,7 @@ public class UserController extends BaseController {
     }
 
     /**
-     * 获得个人信息,没someOneId返回自己的信息
+     * 获得个人信息,没someOneId返回自己的信息   是否是我的好友 是：1 不是：-1 我自己：2
      *
      * @param token
      * @param someOneId
@@ -118,16 +127,27 @@ public class UserController extends BaseController {
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
+        User userVO = null;
         if (someOneId == null) {
-            User userVO = userService.getByUserId(userId);
-            return returnCallback(true, userVO, null);
-        } else {
-            User someOneVO = userService.getByUserId(someOneId);
-            if (someOneVO == null) {
+            userVO = userService.getByUserId(userId);
+            if (userVO == null) {
                 return returnCallback(false, null, "用户信息获取失败！");
             }
-            return returnCallback(true, someOneVO, null);
+            userVO.setRelationStatus(FriendConsts.IS_MYSELF);
+        } else {
+            userVO = userService.getByUserId(someOneId);
+            if (userVO == null) {
+                return returnCallback(false, null, "用户信息获取失败！");
+            }
+            Boolean isFriend = userService.isFriend(userId, someOneId);
+            if (isFriend) {
+                userVO.setRelationStatus(FriendConsts.HAS_BEEN_FRIENDS);
+            } else {
+                userVO.setRelationStatus(FriendConsts.REJECT_TO_BE_FRIENDS);
+            }
         }
+
+        return returnCallback(true, userVO, null);
     }
 
 
@@ -281,12 +301,67 @@ public class UserController extends BaseController {
         User userQV = new User();
         userQV.setUsername(username);
         List<User> userVOList = userService.listUsersByUserNameLike(userQV);
-        if (userVOList == null || userVOList.size() == 0) {
+        if (userVOList == null) {
             userVOList = new ArrayList<User>();
-            return returnCallback(true, userVOList, "没有搜索到对应的结果!");
         }
 
         return returnCallback(true, userVOList, null);
+    }
+
+    /**
+     * 用户头像上传
+     */
+    @RequestMapping(value = "/uploadFile", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback uploadFile(String token, HttpServletRequest request) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback(false, null, "您还未登录，请您先登录!");
+        }
+        User user = userService.getByUserId(userId);
+        if (user == null) {
+            return returnCallback(false, null, "找不到您要查找的用户!");
+        }
+        //将当前上下文初始化给  CommonsMutipartResolver （多部分解析器）
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+        //检查form中是否有enctype="multipart/form-data"
+        if (multipartResolver.isMultipart(request)) {
+            //将request变成多部分request
+            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+            //获取multiRequest 中所有的文件名
+            Iterator iterator = multiRequest.getFileNames();
+
+            while (iterator.hasNext()) {
+                //一次遍历所有文件
+                MultipartFile file = multiRequest.getFile(iterator.next().toString());
+                if (file != null) {
+                    String fileName = file.getOriginalFilename();
+                    Date currData = new Date();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String classPath = this.getClass().getClassLoader().getResource("").getPath();
+                    String projectPath = classPath.substring(0, classPath.length() - "lib/".length()) + "webapps/WEB-INF/data";
+                    String projectName = projectPath.substring(projectPath.lastIndexOf("/") + 1);
+                    String filePath = projectPath + "/profile/" + user.getUsername() + "/" + sdf.format(currData);  //文件夹存放路径
+                    String relativePath = "/" + projectName + "/profile/" + user.getUsername() + "/" + sdf.format(currData); //文件夹存放相对路径
+                    //上传
+                    try {
+                        if (!FileUtil.isDirectory(filePath)) {
+                            FileUtil.mkdir(filePath);
+                        }
+                        file.transferTo(new File(filePath + "-" + fileName));
+                        user.setProfile(relativePath + "-" + fileName);
+                        user.setGmtModified(new Date());
+                        userService.updateUser(user);
+                        return returnCallback(true, relativePath + "-" + fileName, null);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return returnCallback(false, null, e.getMessage());
+                    }
+                }
+            }
+        }
+        return returnCallback(false, null, "上传失败！");
+
     }
 
 }

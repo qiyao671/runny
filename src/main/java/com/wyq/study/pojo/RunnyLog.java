@@ -1,6 +1,7 @@
 package com.wyq.study.pojo;
 
 import java.util.Date;
+import java.util.List;
 
 public class RunnyLog {
     private Integer id;
@@ -9,7 +10,7 @@ public class RunnyLog {
 
     private Double distance;
 
-    private Double spendTime;
+    private Long spendTime;
 
     private Double energy;
 
@@ -26,7 +27,7 @@ public class RunnyLog {
     /*非数据库字段*/
     private Double totalDistance;
 
-    private Double totalSpendTime;
+    private Long totalSpendTime;
 
     private Double totalCount;
 
@@ -43,6 +44,12 @@ public class RunnyLog {
     private Date beginTime;
 
     private Date endTime;
+
+    /**
+     * 非数据库字段
+     */
+
+    private List<Integer> userIds;
 
     public Integer getId() {
         return id;
@@ -68,11 +75,11 @@ public class RunnyLog {
         this.distance = distance;
     }
 
-    public Double getSpendTime() {
+    public Long getSpendTime() {
         return spendTime;
     }
 
-    public void setSpendTime(Double spendTime) {
+    public void setSpendTime(Long spendTime) {
         this.spendTime = spendTime;
     }
 
@@ -109,7 +116,7 @@ public class RunnyLog {
     }
 
     public Integer getTotalEnergy() {
-        return totalEnergy;
+        return totalEnergy == null ? 0 : totalEnergy;
     }
 
     public void setTotalEnergy(Integer totalEnergy) {
@@ -117,23 +124,23 @@ public class RunnyLog {
     }
 
     public Double getTotalDistance() {
-        return totalDistance;
+        return totalDistance == null ? 0 : totalDistance;
     }
 
     public void setTotalDistance(Double totalDistance) {
         this.totalDistance = totalDistance;
     }
 
-    public Double getTotalSpendTime() {
-        return totalSpendTime;
+    public Long getTotalSpendTime() {
+        return totalSpendTime == null ? 0 : totalSpendTime;
     }
 
-    public void setTotalSpendTime(Double totalSpendTime) {
+    public void setTotalSpendTime(Long totalSpendTime) {
         this.totalSpendTime = totalSpendTime;
     }
 
     public Double getTotalCount() {
-        return totalCount;
+        return totalCount == null ? 0 : totalCount;
     }
 
     public void setTotalCount(Double totalCount) {
@@ -192,6 +199,14 @@ public class RunnyLog {
         return altitude;
     }
 
+    public List<Integer> getUserIds() {
+        return userIds;
+    }
+
+    public void setUserIds(List<Integer> userIds) {
+        this.userIds = userIds;
+    }
+
     public void setAltitude(Double altitude) {
         this.altitude = altitude;
     }
@@ -203,4 +218,6 @@ public class RunnyLog {
     public void setStartRunTime(Date startRunTime) {
         this.startRunTime = startRunTime;
     }
+
+
 }

@@ -5,7 +5,7 @@
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="user_id" property="userId" jdbcType="INTEGER"/>
         <result column="distance" property="distance" jdbcType="DOUBLE"/>
-        <result column="spend_time" property="spendTime" jdbcType="DOUBLE"/>
+        <result column="spend_time" property="spendTime" jdbcType="BIGINT"/>
         <result column="energy" property="energy" jdbcType="DOUBLE"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="picture" property="picture" jdbcType="VARCHAR"/>
@@ -27,6 +27,12 @@
     from runny_log
     where user_id = #{userId,jdbcType=INTEGER};
   </select>
+    <select id="getTimeTotalLogInfo" resultMap="BaseResultMap" parameterType="com.wyq.study.pojo.RunnyLog">
+        SELECT sum(distance) as totalDistance,sum(spend_time) as totalSpendTime,sum(energy) as totalEnergy,count(id) as totalCount
+        from runny_log
+        where create_time BETWEEN #{beginTime,jdbcType=TIMESTAMP} AND #{endTime,jdbcType=TIMESTAMP} AND user_id = #{userId,jdbcType=INTEGER}
+        limit 0,1
+    </select>
     <select id="selectPersonalLogInfo" resultMap="BaseResultMap" parameterType="com.wyq.study.pojo.RunnyLog">
         SELECT
         <include refid="Base_Column_List"/>
@@ -59,11 +65,10 @@
         order by spend_time DESC limit 0,1;
     </select>
     <select id="selectFastLogInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-        SELECT
-        <include refid="Base_Column_List"/>
+        SELECT user_id
         from runny_log
         where user_id = #{userId,jdbcType=INTEGER}
-        order by (distance/spend_time) DESC limit 0,1;
+        order by (spend_time / (60 * 1000 * distance)) DESC limit 0,1;
     </select>
     <select id="selectFastPaceLogInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         SELECT
@@ -84,8 +89,20 @@
         user_id, sum(distance) as totalDistance,sum(spend_time) as totalSpendTime,sum(energy) as totalEnergy,count(id) as totalCount
         from runny_log
         where create_time BETWEEN #{beginTime,jdbcType=TIMESTAMP} AND #{endTime,jdbcType=TIMESTAMP}
+        AND (
+         user_id in (SELECT user_id from friend  WHERE friend_id = #{userId,jdbcType=INTEGER} AND status = 1)
+         OR user_id in (SELECT friend_id from friend  WHERE user_id = #{userId,jdbcType=INTEGER} AND status = 1)
+         OR user_id = #{userId,jdbcType=INTEGER}
+        )
         group by user_id
         order by totalDistance DESC
+    </select>
+    <select id="listMyAllRunnyLogs" resultMap="BaseResultMap" parameterType="com.wyq.study.pojo.RunnyLog">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from runny_log
+        where user_id = #{userId,jdbcType=INTEGER}
+        order by id ASC
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from runny_log
@@ -96,7 +113,7 @@
       spend_time, energy, create_time, 
       picture, moment_content, altitude, start_run_time)
         values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{distance,jdbcType=DOUBLE},
-      #{spendTime,jdbcType=DOUBLE}, #{energy,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{spendTime,jdbcType=BIGINT}, #{energy,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP},
       #{picture,jdbcType=VARCHAR}, #{momentContent,jdbcType=VARCHAR}, #{altitude,jdbcType=DOUBLE}, #{startRunTime,jdbcType=TIMESTAMP})
   </insert>
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.wyq.study.pojo.RunnyLog">
@@ -144,7 +161,7 @@
                 #{distance,jdbcType=DOUBLE},
             </if>
             <if test="spendTime != null">
-                #{spendTime,jdbcType=DOUBLE},
+                #{spendTime,jdbcType=BIGINT},
             </if>
             <if test="energy != null">
                 #{energy,jdbcType=DOUBLE},
@@ -176,7 +193,7 @@
                 distance = #{distance,jdbcType=DOUBLE},
             </if>
             <if test="spendTime != null">
-                spend_time = #{spendTime,jdbcType=DOUBLE},
+                spend_time = #{spendTime,jdbcType=BIGINT},
             </if>
             <if test="energy != null">
                 energy = #{energy,jdbcType=DOUBLE},
@@ -194,7 +211,7 @@
                 altitude = #{altitude,jdbcType=DOUBLE},
             </if>
             <if test="startRunTime != null">
-                start_run_time =  #{startRunTime,jdbcType=TIMESTAMP},
+                start_run_time = #{startRunTime,jdbcType=TIMESTAMP},
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
@@ -203,7 +220,7 @@
     update runny_log
     set user_id = #{userId,jdbcType=INTEGER},
       distance = #{distance,jdbcType=DOUBLE},
-      spend_time = #{spendTime,jdbcType=DOUBLE},
+      spend_time = #{spendTime,jdbcType=BIGINT},
       energy = #{energy,jdbcType=DOUBLE},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       picture = #{picture,jdbcType=VARCHAR},

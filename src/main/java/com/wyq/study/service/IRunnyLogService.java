@@ -32,7 +32,12 @@ public interface IRunnyLogService {
 
     PageInfo listTotalRank(Integer num, Integer pageSize);
 
-    PageInfo listTimeRank(Integer num, Integer pageSize, Date startTime, Date endTime);
+    PageInfo listTimeRank(Integer userId, Integer num, Integer pageSize, Date startTime, Date endTime);
 
     int saveRunnyLog(RunnyLog runnyLog);
+
+    RunnyLog getTimeTotalLogInfo(RunnyLog runnyLog);
+
+
+    PageInfo listAllUserRunnyLogsByUserId(Integer userId, Integer num, Integer pageSize);
 }
