@@ -168,4 +168,5 @@ public class User {
     public void setRelationStatus(Integer relationStatus) {
         this.relationStatus = relationStatus;
     }
+
 }

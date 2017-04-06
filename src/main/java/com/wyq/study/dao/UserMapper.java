@@ -21,8 +21,7 @@ public interface UserMapper {
 
     List<User> listFriendsByUserId(Integer userId);
 
-
     List<User> listUsersByUserNameLike(User user);
 
-    List<Integer> listAllFriendIds(Integer userId);
+    List<User> listAllFriendIds(Integer userId);
 }

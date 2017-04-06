@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -87,18 +88,23 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public List<Integer> listAllFriendIds(Integer userId) {
-        return userMapper.listAllFriendIds(userId);
+        List<Integer> fids = new ArrayList<Integer>();
+        List<User> userList = userMapper.listAllFriendIds(userId);
+        for (User user : userList) {
+            fids.add(user.getId());
+        }
+        return fids;
     }
 
     /**
      * 判断该用户是否是我的好友
      */
     @Override
-    public Boolean isFriend(Integer userId,Integer friendId) {
+    public Boolean isFriend(Integer userId, Integer friendId) {
         Boolean isFriend = false;
-        List<Integer> ids = userMapper.listAllFriendIds(userId);
-        for (Integer fid : ids) {
-            if (fid == userId) {
+        List<User> userList = userMapper.listAllFriendIds(userId);
+        for (User user : userList) {
+            if (user.getId() == userId) {
                 isFriend = true;
             }
         }

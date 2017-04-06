@@ -69,6 +69,4 @@ public class MomentServiceImpl implements IMomentService {
     public List<Moment> listUserMoments(Moment momentQry) {
         return momentMapper.listUserMoments(momentQry);
     }
-
-
 }

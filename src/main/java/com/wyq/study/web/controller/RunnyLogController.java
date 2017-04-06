@@ -246,11 +246,17 @@ public class RunnyLogController extends BaseController {
             return returnCallback(false, null, "您还未跑步!");
         }
         runnyLogService.saveRunnyLog(runnyLog);
+
         return returnCallback(true, "记录成功！", null);
     }
 
     /**
      * 我的所有跑步记录
+     *
+     * @param token
+     * @param num
+     * @param pageSize
+     * @return
      */
     @RequestMapping(value = "/listMyAllRunnyLogs", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
@@ -263,6 +269,7 @@ public class RunnyLogController extends BaseController {
             return returnCallback(false, null, "您的分页参数有误");
         }
         PageInfo pageInfo = runnyLogService.listAllUserRunnyLogsByUserId(userId, num, pageSize);
+
         return returnCallback(true, pageInfo, null);
     }
 
