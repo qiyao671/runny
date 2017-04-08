@@ -1,5 +1,7 @@
 package com.wyq.study.web.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.wyq.study.constant.ApproveConsts;
 import com.wyq.study.constant.CommentConsts;
 import com.wyq.study.constant.MomentConsts;
@@ -156,10 +158,10 @@ public class MomentController extends BaseController {
             someOneId = userId;
         }
         if (maxId == null && minId == null && pageSize != null) {
-            //当minId,maxId都为空的时间请求pageSize条数据
+            //当minId,maxId都为空的时请求pageSize条最新数据
             Moment momentQry = new Moment();
             momentQry.setUserId(someOneId);
-            momentQry.setMinId(pageSize + 1);
+            PageHelper.startPage(1, pageSize);
             resultMomentListVO = momentService.listUserMoments(momentQry);
         }
         if (maxId != null) {
@@ -168,10 +170,11 @@ public class MomentController extends BaseController {
             momentQry.setMaxId(maxId);
             resultMomentListVO = momentService.listUserMoments(momentQry);
         }
-        if (minId != null) {
+        if (minId != null && pageSize != null) {
             Moment momentQry = new Moment();
             momentQry.setUserId(someOneId);
             momentQry.setMinId(minId);
+            PageHelper.startPage(1, pageSize);
             resultMomentListVO = momentService.listUserMoments(momentQry);
         }
         for (Moment moment : resultMomentListVO) {
@@ -206,13 +209,13 @@ public class MomentController extends BaseController {
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
-        //minId：上拉加载更多，maxId下拉刷新，加载新数据
+        //minId：上拉加载更多pageSize条，maxId下拉刷新，加载新数据
         if (minId != null && maxId != null || pageSize == null && minId == null && maxId == null) {
             return returnCallback(false, null, "参数配置错误！");
         }
         List<Moment> resultMomentListVO = new ArrayList<Moment>();
         if (maxId == null && minId == null && pageSize != null) {
-            //当minId,maxId都为空的时间请求pageSize条数据
+            //当minId,maxId都为空的时请求pageSize条数据
             Moment momentQry = new Moment();
             momentQry.setUserId(userId);
             momentQry.setMinId(pageSize + 1);
@@ -224,7 +227,7 @@ public class MomentController extends BaseController {
             momentQry.setMaxId(maxId);
             resultMomentListVO = momentService.listNewestMoments(momentQry);
         }
-        if (minId != null) {
+        if (minId != null && pageSize != null) {
             Moment momentQry = new Moment();
             momentQry.setUserId(userId);
             momentQry.setMinId(minId);

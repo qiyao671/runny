@@ -301,6 +301,12 @@ public class UserController extends BaseController {
         User userQV = new User();
         userQV.setUsername(username);
         List<User> userVOList = userService.listUsersByUserNameLike(userQV);
+        for (User user : userVOList) {
+            //移除本人
+            if (user.getId() == userId) {
+                userVOList.remove(user);
+            }
+        }
         if (userVOList == null) {
             userVOList = new ArrayList<User>();
         }
@@ -360,8 +366,8 @@ public class UserController extends BaseController {
                 }
             }
         }
-        return returnCallback(false, null, "上传失败！");
 
+        return returnCallback(false, null, "上传失败！");
     }
 
 }
