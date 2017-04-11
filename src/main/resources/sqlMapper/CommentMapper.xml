@@ -29,7 +29,6 @@
         select *
         from comment ct LEFT JOIN user ur on ct.user_id = ur.id
         where moment_id = #{momentId,jdbcType=INTEGER}
-        order by gmt_create asc
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from comment

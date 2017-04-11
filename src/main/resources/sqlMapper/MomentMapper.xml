@@ -33,7 +33,7 @@
         ,
         <include refid="Blob_Column_List"/>
         from moment
-        <trim prefix="WHERE" prefixOverrides="AND |OR">
+        <trim prefix="WHERE" prefixOverrides="AND | OR">
             <if test="maxId != null and maxId!=''">
                 AND id > #{maxId,jdbcType=INTEGER}
             </if>

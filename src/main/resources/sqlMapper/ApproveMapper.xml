@@ -41,7 +41,6 @@
         SELECT *
         from approve ae left join user ur on  ae.user_id = ur.id
         where moment_id = #{momentId,jdbcType=INTEGER}
-        order by gmt_create asc
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from approve
