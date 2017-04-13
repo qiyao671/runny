@@ -9,6 +9,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import javax.annotation.Resource;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
@@ -38,7 +40,7 @@ public class MomentMapperTest {
 
     @Test
     public void selectMomentByPrimaryKey() throws Exception {
-        Moment moment = momentMapper.selectMomentByPrimaryKey(1);
+        Moment moment = momentMapper.selectMomentByPrimaryKey(2);
         assertNotNull(moment);
     }
 
@@ -76,6 +78,12 @@ public class MomentMapperTest {
 
     @Test
     public void listUserMoments() throws Exception {
+    }
+
+    @Test
+    public void listFriendsMoment() {
+        List<Moment> moments = momentMapper.listFriendsMoment(1, null, 4, 2);
+        assertNotNull(moments);
     }
 
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--suppress ALL -->
 <mapper namespace="com.wyq.study.dao.MomentMapper">
     <resultMap id="BaseResultMap" type="com.wyq.study.pojo.Moment">
         <id column="id" property="id" jdbcType="INTEGER"/>
@@ -48,8 +49,8 @@
 
     <resultMap id="ResultMapWithUserAndApprovesAndComments" type="com.wyq.study.pojo.Moment"
                extends="ResultMapWithUser">
-        <!--<collection property="commentList" ofType="com.wyq.study.pojo.Comment" />-->
         <id column="id" property="id" jdbcType="INTEGER"/>
+        <collection property="commentList" columnPrefix="comment_" ofType="com.wyq.study.pojo.Comment" resultMap="commentResultMap"/>
         <collection property="approveList" columnPrefix="approve_" ofType="com.wyq.study.pojo.Approve"
                     resultMap="approveResultMap"/>
     </resultMap>
@@ -144,14 +145,50 @@
     <select id="selectMomentByPrimaryKey" parameterType="java.lang.Integer"
             resultMap="ResultMapWithUserAndApprovesAndComments">
                 SELECT m.*, u.username AS user_username, u.`profile` AS user_profile,
-					a.id AS approve_id, a.moment_id AS approve_moment_id, a.`status` AS approve_status,
-					a.user_id AS approve_user_id, a.`profile` as approve_user_profile, a.username AS approve_user_username
-        FROM moment m
-				LEFT OUTER JOIN user u ON m.user_id = u.id
-        LEFT OUTER JOIN
-						(SELECT approve.*, profile, username FROM approve, `user` where user_id = `user`.id) a
-				ON a.moment_id = m.id
+			a.id AS approve_id, a.moment_id AS approve_moment_id, a.`status` AS approve_status,
+			a.user_id AS approve_user_id, a.`profile` as approve_user_profile, a.username AS approve_user_username,
+			c.moment_id AS comment_moment_id, c.content as comment_content, c.id as comment_id, c.user_id as comment_user_id, c.replied_user_id as comment_replied_user_id, c.`status` AS coment_status, c.gmt_create as comment_gmt_create,
+			c.comment_replied_user_profile, c.comment_replied_user_username, c.comment_user_profile, c.comment_user_username
+FROM moment m
+LEFT OUTER JOIN user u ON m.user_id = u.id
+LEFT OUTER JOIN (SELECT approve.*, profile, username FROM approve, `user` where user_id = `user`.id) a ON a.moment_id = m.id
+LEFT OUTER JOIN (SELECT `comment`.*, a.username AS comment_user_username, a.`profile` as comment_user_profile, b.username AS comment_replied_user_username, b.`profile` AS comment_replied_user_profile
+                        FROM comment
+                        LEFT OUTER JOIN user a ON user_id = a.id
+                        LEFT OUTER JOIN user b ON replied_user_id = b.id) c ON c.moment_id = m.id
         WHERE m.id = #{userId,jdbcType=INTEGER}
+    </select>
+    
+    <select id="listFriendsMoment" resultMap="ResultMapWithUserAndApprovesAndComments">
+        SELECT mu.*, a.id AS approve_id, a.moment_id AS approve_moment_id, a.`status` AS approve_status,
+                a.user_id AS approve_user_id, a.`profile` as approve_user_profile, a.username AS approve_user_username,
+                c.moment_id AS comment_moment_id, c.content as comment_content, c.id as comment_id, c.user_id as comment_user_id, c.replied_user_id as comment_replied_user_id, c.`status` AS coment_status, c.gmt_create as comment_gmt_create,
+                c.comment_replied_user_profile, c.comment_replied_user_username, c.comment_user_profile, c.comment_user_username
+        FROM
+        (SELECT m.*, u.username AS user_username, u.`profile` AS user_profile
+                FROM moment m
+                LEFT OUTER JOIN user u ON m.user_id = u.id
+        WHERE (u.id IN (SELECT user_id FROM friend WHERE friend_id = #{userId,jdbcType=INTEGER}
+                       UNION
+                       SELECT friend_id as user_id FROM friend WHERE user_id = #{userId,jdbcType=INTEGER})
+        OR u.id = #{userId,jdbcType=INTEGER})
+        <if test="maxId == null and pageSize != null">
+            <if test="minId != null">
+                AND m.id <![CDATA[<]]> #{minId, jdbcType=INTEGER}
+            </if>
+            ORDER BY m.gmt_create DESC
+            LIMIT 0, #{pageSize, jdbcType=INTEGER}
+        </if>
+        <if test="maxId != null">
+            AND m.id > #{maxId, jdbcType=INTEGER}
+            ORDER BY m.gmt_create DESC
+        </if>) AS mu
+                LEFT OUTER JOIN (SELECT approve.*, profile, username FROM approve, `user` where user_id = `user`.id) a ON a.moment_id = mu.id
+                LEFT OUTER JOIN (SELECT `comment`.*, a.username AS comment_user_username, a.`profile` as comment_user_profile, b.username AS comment_replied_user_username, b.`profile` AS comment_replied_user_profile
+                                  FROM comment
+                                  LEFT OUTER JOIN user a ON user_id = a.id
+                                  LEFT OUTER JOIN user b ON replied_user_id = b.id) c ON c.moment_id = mu.id
+
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
