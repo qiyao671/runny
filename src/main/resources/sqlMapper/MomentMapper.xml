@@ -10,15 +10,56 @@
         <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP"/>
         <result column="status" property="status" jdbcType="SMALLINT"/>
     </resultMap>
+
     <resultMap id="ResultMapWithBLOBs" type="com.wyq.study.pojo.Moment" extends="BaseResultMap">
         <result column="content" property="content" jdbcType="LONGVARCHAR"/>
     </resultMap>
+
+    <resultMap id="ResultMapWithUser" type="com.wyq.study.pojo.Moment" extends="ResultMapWithBLOBs">
+        <association property="user" columnPrefix="user_" javaType="com.wyq.study.pojo.User" resultMap="userResultMap"/>
+    </resultMap>
+
+    <resultMap id="userResultMap" type="com.wyq.study.pojo.User">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="username" property="username"/>
+        <result column="profile" property="profile"/>
+    </resultMap>
+
+    <resultMap id="approveResultMap" type="com.wyq.study.pojo.Approve">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="moment_id" property="momentId" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="SMALLINT"/>
+        <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP"/>
+        <association property="user" columnPrefix="user_" javaType="com.wyq.study.pojo.User" resultMap="userResultMap"/>
+    </resultMap>
+
+    <resultMap id="commentResultMap" type="com.wyq.study.pojo.Comment">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="moment_id" property="momentId" jdbcType="INTEGER"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="replied_user_id" property="repliedUserId" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="SMALLINT"/>
+        <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP"/>
+        <association property="user" columnPrefix="user_" javaType="com.wyq.study.pojo.User" resultMap="userResultMap" />
+        <association property="repliedUser" columnPrefix="replied_user_" javaType="com.wyq.study.pojo.User" resultMap="userResultMap" />
+    </resultMap>
+
+    <resultMap id="ResultMapWithUserAndApprovesAndComments" type="com.wyq.study.pojo.Moment"
+               extends="ResultMapWithUser">
+        <!--<collection property="commentList" ofType="com.wyq.study.pojo.Comment" />-->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <collection property="approveList" columnPrefix="approve_" ofType="com.wyq.study.pojo.Approve"
+                    resultMap="approveResultMap"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
-    id, user_id, title, picture, gmt_create, gmt_modified, status
-  </sql>
+      id, user_id, title, picture, gmt_create, gmt_modified, status
+    </sql>
     <sql id="Blob_Column_List">
-    content
-  </sql>
+      content
+    </sql>
     <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
@@ -50,7 +91,8 @@
         ,
         <include refid="Blob_Column_List"/>
         from moment
-        where user_id in (SELECT friend_id from friend WHERE user_id = #{userId,jdbcType=INTEGER}) OR user_id = #{userId,jdbcType=INTEGER}
+        where user_id in (SELECT friend_id from friend WHERE user_id = #{userId,jdbcType=INTEGER}) OR user_id =
+        #{userId,jdbcType=INTEGER}
         order by gmt_create desc
     </select>
     <select id="listNewestMoments" resultMap="ResultMapWithBLOBs" parameterType="com.wyq.study.pojo.Moment">
@@ -66,7 +108,8 @@
             <if test="minId != null and minId!=''">
                 AND id <![CDATA[<]]> #{minId,jdbcType=INTEGER}
             </if>
-            AND (user_id in (SELECT friend_id from friend WHERE user_id = #{userId,jdbcType=INTEGER}) OR user_id = #{userId,jdbcType=INTEGER})
+            AND (user_id in (SELECT friend_id from friend WHERE user_id = #{userId,jdbcType=INTEGER}) OR user_id =
+            #{userId,jdbcType=INTEGER})
         </trim>
         order by gmt_create desc
     </select>
@@ -83,7 +126,8 @@
             <if test="minId != null and minId!=''">
                 AND id <![CDATA[<]]> #{minId,jdbcType=INTEGER}
             </if>
-            AND (user_id in (SELECT friend_id from friend WHERE user_id = #{userId,jdbcType=INTEGER}) OR user_id = #{userId,jdbcType=INTEGER})
+            AND (user_id in (SELECT friend_id from friend WHERE user_id = #{userId,jdbcType=INTEGER}) OR user_id =
+            #{userId,jdbcType=INTEGER})
         </trim>
         order by gmt_create desc
     </select>
@@ -96,6 +140,20 @@
         where user_id = #{userId,jdbcType=INTEGER}
         order by gmt_create ASC
     </select>
+
+    <select id="selectMomentByPrimaryKey" parameterType="java.lang.Integer"
+            resultMap="ResultMapWithUserAndApprovesAndComments">
+                SELECT m.*, u.username AS user_username, u.`profile` AS user_profile,
+					a.id AS approve_id, a.moment_id AS approve_moment_id, a.`status` AS approve_status,
+					a.user_id AS approve_user_id, a.`profile` as approve_user_profile, a.username AS approve_user_username
+        FROM moment m
+				LEFT OUTER JOIN user u ON m.user_id = u.id
+        LEFT OUTER JOIN
+						(SELECT approve.*, profile, username FROM approve, `user` where user_id = `user`.id) a
+				ON a.moment_id = m.id
+        WHERE m.id = #{userId,jdbcType=INTEGER}
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from moment
     where id = #{id,jdbcType=INTEGER}

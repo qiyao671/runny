@@ -23,6 +23,8 @@ public class Comment {
 
     private User user;
 
+    private User repliedUser;
+
     public Integer getId() {
         return id;
     }
@@ -93,5 +95,13 @@ public class Comment {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public User getRepliedUser() {
+        return repliedUser;
+    }
+
+    public void setRepliedUser(User repliedUser) {
+        this.repliedUser = repliedUser;
     }
 }

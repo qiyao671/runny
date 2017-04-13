@@ -13,6 +13,8 @@ public interface MomentMapper {
 
     Moment selectByPrimaryKey(Integer id);
 
+    Moment selectMomentByPrimaryKey(Integer id);
+
     int updateByPrimaryKeySelective(Moment record);
 
     int updateByPrimaryKeyWithBLOBs(Moment record);

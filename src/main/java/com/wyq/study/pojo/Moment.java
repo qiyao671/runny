@@ -32,6 +32,8 @@ public class Moment {
     /*是否点赞了*/
     private Boolean isApproved;
 
+    private User user;
+
     private List<Comment> commentList;
 
     private List<Approve> approveList;
@@ -154,5 +156,13 @@ public class Moment {
 
     public void setApproved(Boolean approved) {
         isApproved = approved;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
