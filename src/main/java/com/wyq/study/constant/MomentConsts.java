@@ -17,4 +17,10 @@ public class MomentConsts {
     //隐藏状态，只对自己显示
     public final static Short HIDE_MODEL = 0;
 
+    //对好友显示状态
+    public final static Short APPROVED = 1;
+
+    //隐藏状态，只对自己显示
+    public final static Short UNAPPROVED = 0;
+
 }

@@ -29,6 +29,8 @@ public interface IMomentService {
 
     List<Moment> listMoreMoments(Moment momentQry);
 
+    List<Moment> listFriendsMoment(Integer userId, Integer maxId, Integer minId, Integer pageSize);
+
     List<Moment> listUserMomentByUserId(Integer userId);
 
     List<Moment> listUserMoments(Moment momentQry);

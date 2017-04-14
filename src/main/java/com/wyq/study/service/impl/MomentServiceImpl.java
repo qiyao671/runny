@@ -61,6 +61,11 @@ public class MomentServiceImpl implements IMomentService {
     }
 
     @Override
+    public List<Moment> listFriendsMoment(Integer userId, Integer maxId, Integer minId, Integer pageSize) {
+        return momentMapper.listFriendsMoment(userId, maxId, minId, pageSize);
+    }
+
+    @Override
     public List<Moment> listUserMomentByUserId(Integer userId) {
         return momentMapper.listUserMomentByUserId(userId);
     }

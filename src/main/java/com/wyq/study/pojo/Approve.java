@@ -9,8 +9,6 @@ public class Approve {
 
     private Integer userId;
 
-    private Integer approveUserId;
-
     private Short status;
 
     private Date gmtCreate;
@@ -42,14 +40,6 @@ public class Approve {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
-    }
-
-    public Integer getApproveUserId() {
-        return approveUserId;
-    }
-
-    public void setApproveUserId(Integer approveUserId) {
-        this.approveUserId = approveUserId;
     }
 
     public Short getStatus() {

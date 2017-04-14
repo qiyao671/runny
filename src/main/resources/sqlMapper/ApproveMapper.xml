@@ -5,7 +5,6 @@
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="moment_id" property="momentId" jdbcType="INTEGER"/>
         <result column="user_id" property="userId" jdbcType="INTEGER"/>
-        <result column="approve_user_id" property="approveUserId" jdbcType="INTEGER"/>
         <result column="status" property="status" jdbcType="SMALLINT"/>
         <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP"/>
         <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP"/>
@@ -16,7 +15,7 @@
         </association>
     </resultMap>
     <sql id="Base_Column_List">
-    id, moment_id, user_id, approve_user_id, status, gmt_create, gmt_modified
+    id, moment_id, user_id, status, gmt_create, gmt_modified
   </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
@@ -52,7 +51,7 @@
   </delete>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.wyq.study.pojo.Approve">
     insert into approve (id, moment_id, user_id, 
-      approve_user_id, status, gmt_create, 
+      status, gmt_create,
       gmt_modified)
     values (#{id,jdbcType=INTEGER}, #{momentId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
       #{approveUserId,jdbcType=INTEGER}, #{status,jdbcType=SMALLINT}, #{gmtCreate,jdbcType=TIMESTAMP}, 
@@ -69,9 +68,6 @@
             </if>
             <if test="userId != null">
                 user_id,
-            </if>
-            <if test="approveUserId != null">
-                approve_user_id,
             </if>
             <if test="status != null">
                 status,
@@ -116,9 +112,6 @@
             <if test="userId != null">
                 user_id = #{userId,jdbcType=INTEGER},
             </if>
-            <if test="approveUserId != null">
-                approve_user_id = #{approveUserId,jdbcType=INTEGER},
-            </if>
             <if test="status != null">
                 status = #{status,jdbcType=SMALLINT},
             </if>
@@ -135,7 +128,6 @@
     update approve
     set moment_id = #{momentId,jdbcType=INTEGER},
       user_id = #{userId,jdbcType=INTEGER},
-      approve_user_id = #{approveUserId,jdbcType=INTEGER},
       status = #{status,jdbcType=SMALLINT},
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       gmt_modified = #{gmtModified,jdbcType=TIMESTAMP}

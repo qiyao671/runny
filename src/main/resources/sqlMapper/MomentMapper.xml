@@ -183,12 +183,12 @@ LEFT OUTER JOIN (SELECT `comment`.*, a.username AS comment_user_username, a.`pro
             AND m.id > #{maxId, jdbcType=INTEGER}
             ORDER BY m.gmt_create DESC
         </if>) AS mu
-                LEFT OUTER JOIN (SELECT approve.*, profile, username FROM approve, `user` where user_id = `user`.id) a ON a.moment_id = mu.id
-                LEFT OUTER JOIN (SELECT `comment`.*, a.username AS comment_user_username, a.`profile` as comment_user_profile, b.username AS comment_replied_user_username, b.`profile` AS comment_replied_user_profile
-                                  FROM comment
-                                  LEFT OUTER JOIN user a ON user_id = a.id
-                                  LEFT OUTER JOIN user b ON replied_user_id = b.id) c ON c.moment_id = mu.id
-
+        LEFT OUTER JOIN (SELECT approve.*, profile, username FROM approve, `user` where user_id = `user`.id) a ON a.moment_id = mu.id
+        LEFT OUTER JOIN (SELECT `comment`.*, a.username AS comment_user_username, a.`profile` as comment_user_profile, b.username AS comment_replied_user_username, b.`profile` AS comment_replied_user_profile
+                            FROM comment
+                            LEFT OUTER JOIN user a ON user_id = a.id
+                            LEFT OUTER JOIN user b ON replied_user_id = b.id) c ON c.moment_id = mu.id
+        ORDER BY mu.gmt_create DESC
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

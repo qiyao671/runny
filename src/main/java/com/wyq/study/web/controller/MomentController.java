@@ -135,13 +135,13 @@ public class MomentController extends BaseController {
 //        }
 //        return returnCallback(true, momentVO, null);
 //    }
-
-    /**
+/*
+    *//**
      * 获得某个好友动态列表
      *
      * @param token
      * @return
-     */
+     *//*
     @RequestMapping(value = "/listUserMoments", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public Callback listUserMoments(String token, Integer someOneId, Integer minId, Integer maxId, Integer pageSize) {
@@ -191,7 +191,7 @@ public class MomentController extends BaseController {
             moment.setApproved(isApproved);
         }
         return returnCallback(true, resultMomentListVO, null);
-    }
+    }*/
 
     /**
      * 朋友圈动态列表显示
@@ -214,7 +214,7 @@ public class MomentController extends BaseController {
             return returnCallback(false, null, "参数配置错误！");
         }
         List<Moment> resultMomentListVO = new ArrayList<Moment>();
-        if (maxId == null && minId == null && pageSize != null) {
+/*        if (maxId == null && minId == null && pageSize != null) {
             //当minId,maxId都为空的时请求pageSize条数据
             Moment momentQry = new Moment();
             momentQry.setUserId(userId);
@@ -244,6 +244,31 @@ public class MomentController extends BaseController {
 
             moment.setCommentList(commentList);
             moment.setApproveList(approveList);
+            moment.setApproved(isApproved);
+        }*/
+
+        return returnCallback(true, resultMomentListVO, null);
+    }
+
+    @RequestMapping(value = "/listFriendsMoments", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback listFriendsMoments(String token, Integer minId, Integer maxId, Integer pageSize) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback(false, null, "您还未登录，请您先登录!");
+        }
+        //minId：上拉加载更多pageSize条，maxId下拉刷新，加载新数据
+        if (maxId == null && pageSize == null || minId != null && maxId != null) {
+            return returnCallback(false, null, "参数配置错误！");
+        }
+        List<Moment> resultMomentListVO = momentService.listFriendsMoment(userId, maxId, minId, pageSize);
+        for (Moment moment : resultMomentListVO) {
+            Approve approveQry = new Approve();
+            approveQry.setMomentId(moment.getId());
+            approveQry.setUserId(userId);
+            approveQry.setStatus(MomentConsts.APPROVED);
+            Boolean isApproved = approveService.isApprove(approveQry);
+
             moment.setApproved(isApproved);
         }
 
@@ -291,7 +316,6 @@ public class MomentController extends BaseController {
         if (isApprove) {
             Approve approve = new Approve();
             approve.setGmtCreate(new Date());
-            approve.setApproveUserId(moment.getUserId());
             approve.setUserId(userId);
             approve.setMomentId(momentId);
             approve.setStatus(ApproveConsts.NORMAL_MODEL);

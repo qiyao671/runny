@@ -20,15 +20,6 @@ public class Moment {
 
     private String content;
 
-    /*非数据库字段*/
-    private Integer minId;
-
-    private Integer maxId;
-
-    private Integer num;
-
-    private Integer pageSize;
-
     /*是否点赞了*/
     private Boolean isApproved;
 
@@ -100,38 +91,6 @@ public class Moment {
 
     public void setContent(String content) {
         this.content = content == null ? null : content.trim();
-    }
-
-    public Integer getMinId() {
-        return minId;
-    }
-
-    public void setMinId(Integer minId) {
-        this.minId = minId;
-    }
-
-    public Integer getMaxId() {
-        return maxId;
-    }
-
-    public void setMaxId(Integer maxId) {
-        this.maxId = maxId;
-    }
-
-    public Integer getNum() {
-        return num;
-    }
-
-    public void setNum(Integer num) {
-        this.num = num;
-    }
-
-    public Integer getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
     }
 
     public List<Comment> getCommentList() {
