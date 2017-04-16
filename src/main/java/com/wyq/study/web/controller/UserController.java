@@ -127,7 +127,7 @@ public class UserController extends BaseController {
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
-        User userVO = null;
+        User userVO;
         if (someOneId == null) {
             userVO = userService.getByUserId(userId);
             if (userVO == null) {
@@ -139,12 +139,7 @@ public class UserController extends BaseController {
             if (userVO == null) {
                 return returnCallback(false, null, "用户信息获取失败！");
             }
-            Boolean isFriend = userService.isFriend(userId, someOneId);
-            if (isFriend) {
-                userVO.setRelationStatus(FriendConsts.HAS_BEEN_FRIENDS);
-            } else {
-                userVO.setRelationStatus(FriendConsts.REJECT_TO_BE_FRIENDS);
-            }
+            userVO.setRelationStatus(friendService.getFriendRelationStatus(userId, someOneId));
         }
 
         return returnCallback(true, userVO, null);
@@ -191,7 +186,10 @@ public class UserController extends BaseController {
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
-        List<User> userList = userService.listFriends(userId);
+        List<User> userList = friendService.listFriends(userId);
+        for (User user : userList) {
+            user.setRelationStatus(FriendConsts.HAS_BEEN_FRIENDS);
+        }
 
         return returnCallback(true, userList, null);
     }
@@ -217,14 +215,42 @@ public class UserController extends BaseController {
         if (user == null) {
             return returnCallback(false, null, "找不到您要添加的好友！");
         }
-        Friend friend = new Friend();
-        friend.setUserId(userId);
-        friend.setFriendId(friendUserId);
-        friend.setStatus(FriendConsts.ADD_FRIENDS);
-        friend.setCreateTime(new Date());
-        friendService.saveFriend(friend);
+        Friend friend = friendService.getFriendByUserIdAndFriendId(friendUserId, userId);
+        if (friend != null) {
+            if (friend.getStatus() == FriendConsts.ADD_FRIENDS) {
+                friend.setStatus(FriendConsts.HAS_BEEN_FRIENDS);
+                friend.setModifyTime(new Date());
+                friendService.updateFriendByPrimaryKey(friend);
+                return returnCallback(true, "添加好友成功", null);
+            } else if (friend.getStatus() != FriendConsts.HAS_BEEN_FRIENDS) {
+                friend.setStatus(FriendConsts.ADD_FRIENDS);
+                friend.setModifyTime(new Date());
+                friendService.updateFriendByPrimaryKey(friend);
+                return returnCallback(true, "已发送好友请求", null);
+            } else {
+                return returnCallback(true, "你们已经是好友了", null);
 
-        return returnCallback(true, "添加好友成功！", null);
+            }
+        }
+
+        friend = friendService.getFriendByUserIdAndFriendId(userId, friendUserId);
+        if (friend != null && friend.getStatus() != FriendConsts.HAS_BEEN_FRIENDS) {
+            friend.setStatus(FriendConsts.ADD_FRIENDS);
+            friend.setModifyTime(new Date());
+            friendService.updateFriendByPrimaryKey(friend);
+            return returnCallback(true, "已发送好友请求", null);
+        } else if (friend != null && friend.getStatus() == FriendConsts.HAS_BEEN_FRIENDS) {
+            return returnCallback(true, "你们已经是好友了", null);
+        } else {
+            friend = new Friend();
+            friend.setUserId(userId);
+            friend.setFriendId(friendUserId);
+            friend.setStatus(FriendConsts.ADD_FRIENDS);
+            friend.setCreateTime(new Date());
+            friendService.saveFriend(friend);
+        }
+
+        return returnCallback(true, "已发送好友请求", null);
     }
 
     /**
@@ -244,15 +270,15 @@ public class UserController extends BaseController {
         if (friendUserId == null) {
             return returnCallback(false, null, "请先选择您要添加的好友!");
         }
-        Friend friend = friendService.getFriendByUserId(friendUserId);
+        Friend friend = friendService.getFriendByUserIdAndFriendId(friendUserId, userId);
         if (friend == null) {
             return returnCallback(false, null, "找不到这个好友请求，maybe是外星人加你!");
         }
         friend.setStatus(FriendConsts.HAS_BEEN_FRIENDS);
         friend.setModifyTime(new Date());
-        friendService.saveFriend(friend);
+        friendService.updateFriendByPrimaryKey(friend);
 
-        return returnCallback(true, "同意添加好友！", null);
+        return returnCallback(true, "成功添加好友", null);
     }
 
     /**
@@ -300,15 +326,14 @@ public class UserController extends BaseController {
         }
         User userQV = new User();
         userQV.setUsername(username);
+        userQV.setId(userId);
         List<User> userVOList = userService.listUsersByUserNameLike(userQV);
-        for (User user : userVOList) {
-            //移除本人
-            if (user.getId() == userId) {
-                userVOList.remove(user);
-            }
-        }
         if (userVOList == null) {
             userVOList = new ArrayList<User>();
+        } else {
+            for (User user : userVOList) {
+                user.setRelationStatus(friendService.getFriendRelationStatus(userId, user.getId()));
+            }
         }
 
         return returnCallback(true, userVOList, null);
@@ -368,6 +393,21 @@ public class UserController extends BaseController {
         }
 
         return returnCallback(false, null, "上传失败！");
+    }
+
+    @RequestMapping(value = "/listFriendRequests", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback listFriendRequests(String token) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback(false, null, "您还未登录，请您先登录!");
+        }
+        List<User> userList = friendService.listFriendsAndRequest(userId);
+        for (User user : userList) {
+            user.setRelationStatus(friendService.getFriendRelationStatus(userId, user.getId()));
+        }
+
+        return returnCallback(true, userList, null);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.wyq.study.dao;
 
 import com.wyq.study.pojo.User;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 

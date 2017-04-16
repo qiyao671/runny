@@ -1,6 +1,10 @@
 package com.wyq.study.dao;
 
 import com.wyq.study.pojo.Friend;
+import com.wyq.study.pojo.User;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface FriendMapper {
     int deleteByPrimaryKey(Integer id);
@@ -17,5 +21,13 @@ public interface FriendMapper {
 
     void deleteByFriend(Friend friend);
 
-    Friend getFriendByUserId(Integer friendUserId);
+    Friend getFriendByUserIdAndFriendId(@Param("userId") Integer userId, @Param("friendUserId") Integer friendUserId);
+
+    Integer getFriendStatus(@Param("user1Id") Integer user1Id, @Param("user2Id") Integer user2Id);
+
+    List<User> listFriendsByUserIdAndStatusStatement(@Param("userId") Integer userId, @Param("statusList") List<Integer> statusList);
+
+    List<User> listFriendsByUserIdAndStatusStatementWithIdSequence(@Param("userId") Integer userId, @Param("statusList") List<Integer> statusList);
+
+    List<User> listFriendsByUserId(Integer userId);
 }

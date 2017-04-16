@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--suppress ALL -->
 <mapper namespace="com.wyq.study.dao.FriendMapper">
     <resultMap id="BaseResultMap" type="com.wyq.study.pojo.Friend">
         <id column="id" property="id" jdbcType="INTEGER"/>
@@ -9,20 +10,69 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
     </resultMap>
+    <sql id="User_Column_List">
+        id, username, password, rank, profile, sex, height, weight, birthday, location, signature, age, gmt_create, gmt_modified
+    </sql>
     <sql id="Base_Column_List">
     id, user_id, friend_id, status, create_time, modify_time
   </sql>
+    <sql id="select_friends_id_by_user_id">
+        SELECT user_id FROM friend WHERE friend_id = #{userId,jdbcType=INTEGER}
+        UNION
+        SELECT friend_id as user_id FROM friend WHERE user_id = #{userId,jdbcType=INTEGER})
+    </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
         from friend
         where id = #{id,jdbcType=INTEGER}
     </select>
+    <select id="getFriendByUserIdAndFriendId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM friend
+        WHERE user_id = #{userId, jdbcType=INTEGER} AND friend_id = #{friendUserId, jdbcType=INTEGER}
+    </select>
+    <select id="getFriendStatus" resultType="java.lang.Integer">
+        SELECT status
+        FROM friend
+        WHERE user_id = #{user1Id, jdbcType=INTEGER} AND friend_id = #{user2Id, jdbcType=INTEGER}
+          OR user_id = #{user2Id, jdbcType=INTEGER} AND friend_id = #{user1Id, jdbcType=INTEGER}
+    </select>
+    <select id="listFriendsByUserIdAndStatusStatement" resultType="com.wyq.study.pojo.User">
+        SELECT
+        <include refid="User_Column_List"/>
+        FROM user u
+        WHERE u.id IN (SELECT user_id FROM friend WHERE friend_id = #{userId,jdbcType=INTEGER}
+        AND status IN
+        <foreach item="item" index="index" collection="statusList"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        UNION
+        SELECT friend_id as user_id FROM friend WHERE user_id = #{userId,jdbcType=INTEGER}
+        AND status IN <foreach item="item" index="index" collection="statusList"
+                               open="(" separator="," close=")">
+        #{item}
+    </foreach>)
+    </select>
+    <select id="listFriendsByUserIdAndStatusStatementWithIdSequence" resultType="com.wyq.study.pojo.User">
+        SELECT
+        <include refid="User_Column_List"/>
+        FROM user u
+        WHERE u.id IN (SELECT user_id FROM friend WHERE friend_id = #{userId,jdbcType=INTEGER}
+        AND status IN
+        <foreach item="item" index="index" collection="statusList"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>)
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from friend
     where id = #{id,jdbcType=INTEGER}
   </delete>
-    <delete id="deleteByFriend" parameterType="com.wyq.study.pojo.Friend" >
+    <delete id="deleteByFriend" parameterType="com.wyq.study.pojo.Friend">
     delete from friend
     where user_id = #{userId,jdbcType=INTEGER} and friend_id = #{friendId,jdbcType=INTEGER}
   </delete>
@@ -103,7 +153,7 @@
       friend_id = #{friendId,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

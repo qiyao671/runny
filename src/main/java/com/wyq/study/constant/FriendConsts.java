@@ -22,5 +22,7 @@ public class FriendConsts {
     //是我自己
     public final static int IS_MYSELF = 2;
 
+    //不是好友
+    public final static int NOT_FRIEND = 3;
 
 }

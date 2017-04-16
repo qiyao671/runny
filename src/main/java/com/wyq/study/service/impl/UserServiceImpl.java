@@ -1,5 +1,6 @@
 package com.wyq.study.service.impl;
 
+import com.wyq.study.constant.FriendConsts;
 import com.wyq.study.dao.UserMapper;
 import com.wyq.study.pojo.User;
 import com.wyq.study.service.IUserService;
@@ -65,13 +66,13 @@ public class UserServiceImpl implements IUserService {
     }
 
     /**
-     * 根据用户id 查出所有好友
+     * 根据用户id 查出所有friend表中存在关系的用户
      *
      * @param userId
      * @return
      */
     @Override
-    public List<User> listFriends(Integer userId) {
+    public List<User> listFriendsIgnoreStatus(Integer userId) {
         return userMapper.listFriendsByUserId(userId);
     }
 
@@ -96,9 +97,9 @@ public class UserServiceImpl implements IUserService {
         return fids;
     }
 
-    /**
+/*    *//**
      * 判断该用户是否是我的好友
-     */
+     *//*
     @Override
     public Boolean isFriend(Integer userId, Integer friendId) {
         Boolean isFriend = false;
@@ -109,6 +110,6 @@ public class UserServiceImpl implements IUserService {
             }
         }
         return isFriend;
-    }
+    }*/
 
 }

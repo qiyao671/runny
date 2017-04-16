@@ -59,6 +59,7 @@
             <if test="username != null and username!=''">
                 username like '%${username}%'
             </if>
+            AND id != #{id}
         </trim>
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

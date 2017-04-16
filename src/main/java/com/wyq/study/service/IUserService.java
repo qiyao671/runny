@@ -19,11 +19,10 @@ public interface IUserService {
     User getByUserId(Integer userId);
 
 
-    List<User> listFriends(Integer userId);
+    List<User> listFriendsIgnoreStatus(Integer userId);
 
     List<User> listUsersByUserNameLike(User user);
 
     List<Integer> listAllFriendIds(Integer userId);
 
-    Boolean isFriend(Integer userId, Integer friendId);
 }
