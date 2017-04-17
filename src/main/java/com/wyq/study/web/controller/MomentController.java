@@ -11,15 +11,24 @@ import com.wyq.study.service.ICommentService;
 import com.wyq.study.service.IMomentService;
 import com.wyq.study.service.IUserService;
 import com.wyq.study.utils.AppSessionHelper;
+import com.xiaoleilu.hutool.io.FileUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -43,13 +52,13 @@ public class MomentController extends BaseController {
     @Resource
     private IApproveService approveService;
 
-    /**
+/*    *//**
      * 添加朋友圈状态
      *
      * @param token
      * @param moment
      * @return
-     */
+     *//*
     @RequestMapping(value = "/saveMoment", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public Callback saveMoment(String token, @RequestBody Moment moment) {
@@ -65,7 +74,78 @@ public class MomentController extends BaseController {
         moment.setStatus(MomentConsts.SHOW_MODEL);
         momentService.saveMoment(moment);
         return returnCallback(true, "状态保存成功！", null);
+    }*/
+
+    /**
+     * 用户头像上传
+     */
+    @RequestMapping(value = "/saveMoment", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback saveMoment(String token, HttpServletRequest request) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback(false, null, "您还未登录，请您先登录!");
+        }
+
+
+        //将当前上下文初始化给  CommonsMutipartResolver （多部分解析器）
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+        //检查form中是否有enctype="multipart/form-data"
+        if (multipartResolver.isMultipart(request)) {
+            //将request变成多部分request
+            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+
+            String content = multiRequest.getParameter("content");
+            if (content == null) {
+                return returnCallback(false, null, "请您先填写您的状态内容！");
+            }
+            Moment moment = new Moment();
+            moment.setContent(content);
+            moment.setUserId(userId);
+            moment.setGmtCreate(new Date());
+            moment.setStatus(MomentConsts.SHOW_MODEL);
+
+            StringBuilder sb = new StringBuilder();
+            //获取multiRequest 中所有的文件名
+            Iterator iterator = multiRequest.getFileNames();
+
+            while (iterator.hasNext()) {
+                //一次遍历所有文件
+                MultipartFile file = multiRequest.getFile(iterator.next().toString());
+                if (file != null) {
+                    String fileName = file.getOriginalFilename();
+                    Date currData = new Date();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String classPath = this.getClass().getClassLoader().getResource("").getPath();
+                    String projectPath = classPath.substring(0, classPath.length() - "lib/".length()) + "webapps/WEB-INF/data";
+                    String projectName = projectPath.substring(projectPath.lastIndexOf("/") + 1);
+                    String filePath = projectPath + "/moment/" + userId + "/" + sdf.format(currData);  //文件夹存放路径
+                    String relativePath = "/" + projectName + "/moment/" + userId + "/" + sdf.format(currData); //文件夹存放相对路径
+                    //上传
+                    try {
+                        if (!FileUtil.isDirectory(filePath)) {
+                            FileUtil.mkdir(filePath);
+                        }
+                        file.transferTo(new File(filePath + "-" + fileName));
+
+                        if (sb.length() > 0){
+                            sb.append(",");
+                        }
+                        sb.append(relativePath + "-" + fileName);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return returnCallback(false, null, e.getMessage());
+                    }
+                }
+                moment.setPicture(sb.toString());
+            }
+            momentService.saveMoment(moment);
+
+        }
+
+        return returnCallback(true, "发表成功", null);
     }
+
 
     /**
      * 删除个人动态
