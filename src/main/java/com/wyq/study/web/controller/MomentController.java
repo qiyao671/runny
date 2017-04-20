@@ -77,7 +77,7 @@ public class MomentController extends BaseController {
     }*/
 
     /**
-     * 用户头像上传
+     * 添加朋友圈
      */
     @RequestMapping(value = "/saveMoment", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
@@ -96,9 +96,6 @@ public class MomentController extends BaseController {
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
 
             String content = multiRequest.getParameter("content");
-            if (content == null) {
-                return returnCallback(false, null, "请您先填写您的状态内容！");
-            }
             Moment moment = new Moment();
             moment.setContent(content);
             moment.setUserId(userId);
@@ -108,7 +105,6 @@ public class MomentController extends BaseController {
             StringBuilder sb = new StringBuilder();
             //获取multiRequest 中所有的文件名
             Iterator iterator = multiRequest.getFileNames();
-
             while (iterator.hasNext()) {
                 //一次遍历所有文件
                 MultipartFile file = multiRequest.getFile(iterator.next().toString());
@@ -137,8 +133,8 @@ public class MomentController extends BaseController {
                         return returnCallback(false, null, e.getMessage());
                     }
                 }
-                moment.setPicture(sb.toString());
             }
+            moment.setPicture(sb.toString());
             momentService.saveMoment(moment);
 
         }
