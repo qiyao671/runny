@@ -12,6 +12,7 @@ import com.wyq.study.utils.MD5;
 import com.xiaoleilu.hutool.io.FileUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -155,7 +156,7 @@ public class UserController extends BaseController {
      */
     @RequestMapping(value = "/update", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback updateUser(User user, String token) {
+    public Callback updateUser(@RequestBody User user, String token) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");

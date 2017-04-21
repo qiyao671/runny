@@ -430,17 +430,16 @@ public class MomentController extends BaseController {
      */
     @RequestMapping(value = "/comment", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback comment(String token, Integer momentId, Comment comment) {
+    public Callback comment(String token, @RequestBody Comment comment) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
-        Moment moment = momentService.getMomentById(momentId);
+        Moment moment = momentService.getMomentById(comment.getMomentId());
         if (moment == null) {
             return returnCallback(false, null, "找不到动态!");
         }
         comment.setUserId(userId);
-        comment.setMomentId(momentId);
         comment.setStatus(CommentConsts.NORMAL_MODEL);
         comment.setGmtCreate(new Date());
         commentService.saveComment(comment);
