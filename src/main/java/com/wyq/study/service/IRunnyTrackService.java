@@ -1,5 +1,10 @@
 package com.wyq.study.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.wyq.study.pojo.RunnyTrack;
+
+import java.util.List;
+
 /**
  * ${DESCRIPTION}
  * 模块名称：study
@@ -10,5 +15,7 @@ package com.wyq.study.service;
  * 系统版本：1.0.0
  **/
 public interface IRunnyTrackService {
+    int saveRunnyTrack(RunnyTrack track);
 
+    List<JSONArray> getRunnyTracks(int logId);
 }

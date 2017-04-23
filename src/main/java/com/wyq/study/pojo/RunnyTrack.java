@@ -7,7 +7,9 @@ public class RunnyTrack {
 
     private Integer logId;
 
-    private String coordinate;
+    private String track;
+
+    private int serial;
 
     private Date gmtCreate;
 
@@ -29,12 +31,12 @@ public class RunnyTrack {
         this.logId = logId;
     }
 
-    public String getCoordinate() {
-        return coordinate;
+    public String getTrack() {
+        return track;
     }
 
-    public void setCoordinate(String coordinate) {
-        this.coordinate = coordinate == null ? null : coordinate.trim();
+    public void setTrack(String track) {
+        this.track = track == null ? null : track.trim();
     }
 
     public Date getGmtCreate() {
@@ -51,5 +53,13 @@ public class RunnyTrack {
 
     public void setGmtModified(Date gmtModified) {
         this.gmtModified = gmtModified;
+    }
+
+    public int getSerial() {
+        return serial;
+    }
+
+    public void setSerial(int serial) {
+        this.serial = serial;
     }
 }

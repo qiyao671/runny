@@ -7,7 +7,9 @@ public class RunnyAltitude {
 
     private Integer logId;
 
-    private String altitude;
+    private String altitudes;
+
+    private int serial;
 
     private Date gmtCreate;
 
@@ -29,12 +31,12 @@ public class RunnyAltitude {
         this.logId = logId;
     }
 
-    public String getAltitude() {
-        return altitude;
+    public String getAltitudes() {
+        return altitudes;
     }
 
-    public void setAltitude(String altitude) {
-        this.altitude = altitude == null ? null : altitude.trim();
+    public void setAltitudes(String altitudes) {
+        this.altitudes = altitudes == null ? null : altitudes.trim();
     }
 
     public Date getGmtCreate() {
@@ -51,5 +53,13 @@ public class RunnyAltitude {
 
     public void setGmtModified(Date gmtModified) {
         this.gmtModified = gmtModified;
+    }
+
+    public int getSerial() {
+        return serial;
+    }
+
+    public void setSerial(int serial) {
+        this.serial = serial;
     }
 }

@@ -1,7 +1,11 @@
 package com.wyq.study.dao;
 
 import com.wyq.study.pojo.RunnyTrack;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
+@Repository
 public interface RunnyTrackMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -10,6 +14,8 @@ public interface RunnyTrackMapper {
     int insertSelective(RunnyTrack record);
 
     RunnyTrack selectByPrimaryKey(Integer id);
+
+    List<RunnyTrack> selectByLogId(Integer logId);
 
     int updateByPrimaryKeySelective(RunnyTrack record);
 

@@ -19,6 +19,7 @@ public interface IRunnyLogService {
 
     RunnyLog getBestLogInfo(Integer userId);
 
+    RunnyLog getRunnyLog(Integer logId);
 
     RunnyLog getPersonalLogInfo(RunnyLog runnyLog);
 

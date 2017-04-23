@@ -4,7 +4,9 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.wyq.study.dao.RunnyLogMapper;
 import com.wyq.study.pojo.RunnyLog;
+import com.wyq.study.service.IRunnyAltitudeService;
 import com.wyq.study.service.IRunnyLogService;
+import com.wyq.study.service.IRunnyTrackService;
 import com.wyq.study.utils.DateUtils;
 import com.xiaoleilu.hutool.date.DateUtil;
 import org.springframework.stereotype.Service;
@@ -27,16 +29,28 @@ public class RunnyLogServiceImpl implements IRunnyLogService {
     @Resource
     private RunnyLogMapper runnyLogMapper;
 
+    @Resource
+    private IRunnyAltitudeService runnyAltitudeService;
+
+    @Resource
+    private IRunnyTrackService runnyTrackService;
+
     @Override
     public RunnyLog getTotalLogInfo(Integer userId) {
-        RunnyLog runnyLog = runnyLogMapper.selectTotalLogInfo(userId);
-        return runnyLog;
+        return runnyLogMapper.selectTotalLogInfo(userId);
     }
 
     @Override
     public RunnyLog getBestLogInfo(Integer userId) {
-
         return null;
+    }
+
+    @Override
+    public RunnyLog getRunnyLog(Integer logId) {
+        RunnyLog runnyLog = runnyLogMapper.getRunnyLogByPrimaryKey(logId);
+        runnyLog.setAltitudeLists(runnyAltitudeService.getRunnyAltitudeList(logId));
+        runnyLog.setTracks(runnyTrackService.getRunnyTracks(logId));
+        return runnyLog;
     }
 
     @Override
@@ -59,9 +73,17 @@ public class RunnyLogServiceImpl implements IRunnyLogService {
         RunnyLog logInfo = runnyLogMapper.selectFastLogInfo(userId);
         Double fastSpeed = 0.0;
         if (logInfo != null) {
-            BigDecimal distance = new BigDecimal(Double.valueOf(logInfo.getDistance()));
-            BigDecimal spendTime = new BigDecimal(Double.valueOf(logInfo.getSpendTime()));
-            fastSpeed = distance.divide(spendTime, 2).doubleValue();
+            BigDecimal distance = null;
+            BigDecimal spendTime = null;
+            if (logInfo.getDistance() != null) {
+                distance = new BigDecimal(logInfo.getDistance());
+            }
+            if (logInfo.getSpendTime() != null) {
+                spendTime = new BigDecimal(Double.valueOf(logInfo.getSpendTime()));
+            }
+            if (distance != null && spendTime != null) {
+                fastSpeed = distance.divide(spendTime, 2).doubleValue();
+            }
             logInfo.setFastSpend(fastSpeed);
         }
         return logInfo;

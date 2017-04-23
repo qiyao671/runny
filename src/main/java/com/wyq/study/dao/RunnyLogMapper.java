@@ -1,9 +1,11 @@
 package com.wyq.study.dao;
 
 import com.wyq.study.pojo.RunnyLog;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface RunnyLogMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -36,4 +38,6 @@ public interface RunnyLogMapper {
     RunnyLog getTimeTotalLogInfo(RunnyLog runnyLogDTO);
 
     List<RunnyLog> listMyAllRunnyLogs(Integer userId);
+
+    RunnyLog getRunnyLogByPrimaryKey(Integer logId);
 }

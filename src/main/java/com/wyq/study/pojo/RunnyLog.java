@@ -1,5 +1,7 @@
 package com.wyq.study.pojo;
 
+import com.alibaba.fastjson.JSONArray;
+
 import java.util.Date;
 import java.util.List;
 
@@ -20,11 +22,14 @@ public class RunnyLog {
 
     private String momentContent;
 
-    private Double altitude;
-
     private Date startRunTime;
 
     /*非数据库字段*/
+
+    private List<JSONArray> tracks;
+
+    private List<JSONArray> altitudeLists;
+
     private Double totalDistance;
 
     private Long totalSpendTime;
@@ -195,20 +200,12 @@ public class RunnyLog {
         this.fastPace = fastPace;
     }
 
-    public Double getAltitude() {
-        return altitude;
-    }
-
     public List<Integer> getUserIds() {
         return userIds;
     }
 
     public void setUserIds(List<Integer> userIds) {
         this.userIds = userIds;
-    }
-
-    public void setAltitude(Double altitude) {
-        this.altitude = altitude;
     }
 
     public Date getStartRunTime() {
@@ -219,5 +216,19 @@ public class RunnyLog {
         this.startRunTime = startRunTime;
     }
 
+    public List<JSONArray> getTracks() {
+        return tracks;
+    }
 
+    public void setTracks(List<JSONArray> tracks) {
+        this.tracks = tracks;
+    }
+
+    public List<JSONArray> getAltitudeLists() {
+        return altitudeLists;
+    }
+
+    public void setAltitudeLists(List<JSONArray> altitudeLists) {
+        this.altitudeLists = altitudeLists;
+    }
 }

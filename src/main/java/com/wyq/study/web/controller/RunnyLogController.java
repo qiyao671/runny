@@ -1,20 +1,27 @@
 package com.wyq.study.web.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.wyq.study.pojo.Callback;
+import com.wyq.study.pojo.RunnyAltitude;
 import com.wyq.study.pojo.RunnyLog;
+import com.wyq.study.pojo.RunnyTrack;
+import com.wyq.study.service.IRunnyAltitudeService;
 import com.wyq.study.service.IRunnyLogService;
+import com.wyq.study.service.IRunnyTrackService;
 import com.wyq.study.utils.AppSessionHelper;
 import com.wyq.study.utils.DateUtils;
 import com.xiaoleilu.hutool.date.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 跑步记录
@@ -35,6 +42,12 @@ public class RunnyLogController extends BaseController {
 
     @Autowired
     private IRunnyLogService runnyLogService;
+
+    @Autowired
+    private IRunnyTrackService runnyTrackService;
+
+    @Autowired
+    private IRunnyAltitudeService runnyAltitudeService;
 
     /**
      * 用户 累计总跑步记录 月累计跑步记录 周累计跑步记录
@@ -237,7 +250,7 @@ public class RunnyLogController extends BaseController {
      */
     @RequestMapping(value = "/saveRunnyLog", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback saveRunnyLog(String token, RunnyLog runnyLog) {
+    public Callback saveRunnyLog(String token, @RequestBody RunnyLog runnyLog) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
@@ -245,7 +258,33 @@ public class RunnyLogController extends BaseController {
         if (runnyLog == null) {
             return returnCallback(false, null, "您还未跑步!");
         }
-        runnyLogService.saveRunnyLog(runnyLog);
+        runnyLog.setCreateTime(new Date());
+        runnyLog.setUserId(userId);
+        int logId = runnyLogService.saveRunnyLog(runnyLog);
+
+        List<JSONArray> altitudesList = runnyLog.getAltitudeLists();
+        if (altitudesList != null) {
+            for (int i = 0; i < altitudesList.size(); i++) {
+                RunnyAltitude runnyAltitude = new RunnyAltitude();
+                runnyAltitude.setLogId(logId);
+                runnyAltitude.setAltitudes(altitudesList.get(i).toJSONString());
+                runnyAltitude.setGmtCreate(new Date());
+                runnyAltitude.setSerial(i);
+                runnyAltitudeService.saveRunnyAltitude(runnyAltitude);
+            }
+        }
+
+        List<JSONArray> tracks = runnyLog.getTracks();
+        if (tracks != null) {
+            for (int i = 0; i < tracks.size(); i++) {
+                RunnyTrack runnyTrack = new RunnyTrack();
+                runnyTrack.setLogId(logId);
+                runnyTrack.setTrack(tracks.get(i).toJSONString());
+                runnyTrack.setGmtCreate(new Date());
+                runnyTrack.setSerial(i);
+                runnyTrackService.saveRunnyTrack(runnyTrack);
+            }
+        }
 
         return returnCallback(true, "记录成功！", null);
     }
@@ -273,4 +312,45 @@ public class RunnyLogController extends BaseController {
         return returnCallback(true, pageInfo, null);
     }
 
+    @RequestMapping(value = "/getRunnyLog", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback getRunnyLog(String token, Integer logId) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback(false, null, "您还未登录，请您先登录!");
+        }
+        if (logId == null) {
+            return returnCallback(false, null, "未指定要获取的跑步记录");
+        }
+        RunnyLog runnyLog = runnyLogService.getRunnyLog(logId);
+        return returnCallback(true, runnyLog, null);
+    }
+
+    @RequestMapping(value = "/getRunnyAltitudeList", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback getRunnyAltitudeList(String token, Integer logId) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback(false, null, "您还未登录，请您先登录!");
+        }
+        if (logId == null) {
+            return returnCallback(false, null, "未指定要获取的跑步记录");
+        }
+        List<JSONArray> runnyAltitudeList = runnyAltitudeService.getRunnyAltitudeList(logId);
+        return returnCallback(true, runnyAltitudeList, null);
+    }
+
+    @RequestMapping(value = "/getRunnyTrackList", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback getRunnyTrackList(String token, Integer logId) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback(false, null, "您还未登录，请您先登录!");
+        }
+        if (logId == null) {
+            return returnCallback(false, null, "未指定要获取的跑步记录");
+        }
+        List<JSONArray> runnyTracks = runnyTrackService.getRunnyTracks(logId);
+        return returnCallback(true, runnyTracks, null);
+    }
 }
