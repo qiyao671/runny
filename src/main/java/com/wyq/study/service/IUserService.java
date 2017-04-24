@@ -17,7 +17,7 @@ public interface IUserService {
     String checkUser(User user);
 
     User getByUserId(Integer userId);
-
+    void updateUserProfile(Integer userId, String profile);
 
     List<User> listFriendsIgnoreStatus(Integer userId);
 

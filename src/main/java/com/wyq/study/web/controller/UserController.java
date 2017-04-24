@@ -142,6 +142,7 @@ public class UserController extends BaseController {
             }
             userVO.setRelationStatus(friendService.getFriendRelationStatus(userId, someOneId));
         }
+        userVO.setProfile(getImageUrl(userVO.getProfile()));
 
         return returnCallback(true, userVO, null);
     }
@@ -190,6 +191,7 @@ public class UserController extends BaseController {
         List<User> userList = friendService.listFriends(userId);
         for (User user : userList) {
             user.setRelationStatus(FriendConsts.HAS_BEEN_FRIENDS);
+            user.setProfile(getImageUrl(user.getProfile()));
         }
 
         return returnCallback(true, userList, null);
@@ -334,6 +336,7 @@ public class UserController extends BaseController {
         } else {
             for (User user : userVOList) {
                 user.setRelationStatus(friendService.getFriendRelationStatus(userId, user.getId()));
+                user.setProfile(getImageUrl(user.getProfile()));
             }
         }
 
@@ -370,20 +373,20 @@ public class UserController extends BaseController {
                     String fileName = file.getOriginalFilename();
                     Date currData = new Date();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    String classPath = this.getClass().getClassLoader().getResource("").getPath();
-                    String projectPath = classPath.substring(0, classPath.length() - "lib/".length()) + "webapps/WEB-INF/data";
-                    String projectName = projectPath.substring(projectPath.lastIndexOf("/") + 1);
-                    String filePath = projectPath + "/profile/" + user.getUsername() + "/" + sdf.format(currData);  //文件夹存放路径
-                    String relativePath = "/" + projectName + "/profile/" + user.getUsername() + "/" + sdf.format(currData); //文件夹存放相对路径
+//                    String classPath = this.getClass().getClassLoader().getResource("").getPath();
+                    String projectPath = request.getServletContext().getRealPath("/");
+//                    String projectName = projectPath.substring(projectPath.lastIndexOf("/") + 1);
+                    String filePath = projectPath + "/images/profile/" + user.getId() + "/" + sdf.format(currData);  //文件夹存放路径
+                    String relativePath = "/profile/" + user.getId() + "/" + sdf.format(currData); //文件夹存放相对路径
                     //上传
                     try {
                         if (!FileUtil.isDirectory(filePath)) {
                             FileUtil.mkdir(filePath);
                         }
                         file.transferTo(new File(filePath + "-" + fileName));
-                        user.setProfile(relativePath + "-" + fileName);
                         user.setGmtModified(new Date());
                         userService.updateUser(user);
+                        userService.updateUserProfile(user.getId(), relativePath + "-" + fileName);
                         return returnCallback(true, relativePath + "-" + fileName, null);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -406,9 +409,13 @@ public class UserController extends BaseController {
         List<User> userList = friendService.listFriendsAndRequest(userId);
         for (User user : userList) {
             user.setRelationStatus(friendService.getFriendRelationStatus(userId, user.getId()));
+            user.setProfile(getImageUrl(user.getProfile()));
         }
 
         return returnCallback(true, userList, null);
     }
 
+    private String getImageUrl(String imageName) {
+        return "http://192.168.31.245:8080/images" + imageName;
+    }
 }

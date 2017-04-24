@@ -2,6 +2,7 @@ package com.wyq.study.dao;
 
 import com.wyq.study.pojo.User;
 import org.apache.ibatis.annotations.Param;
+import org.jboss.logging.Field;
 
 import java.util.List;
 
@@ -25,4 +26,6 @@ public interface UserMapper {
     List<User> listUsersByUserNameLike(User user);
 
     List<User> listAllFriendIds(Integer userId);
+
+    int updateProfileByPrimaryKey(@Param("userId") Integer userId, @Param("profile") String profile);
 }

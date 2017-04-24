@@ -26,7 +26,6 @@
     <!--</bean>-->
 
     <mvc:default-servlet-handler />
-    <mvc:resources mapping="/public/**" location="/WEB-INF/public/" />
 
     <bean id="jacksonMessageConverter"
           class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">

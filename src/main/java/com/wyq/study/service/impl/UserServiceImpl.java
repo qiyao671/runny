@@ -65,6 +65,11 @@ public class UserServiceImpl implements IUserService {
         return userMapper.selectByPrimaryKey(userId);
     }
 
+    @Override
+    public void updateUserProfile(Integer userId, String profile) {
+        userMapper.updateProfileByPrimaryKey(userId, profile);
+    }
+
     /**
      * 根据用户id 查出所有friend表中存在关系的用户
      *

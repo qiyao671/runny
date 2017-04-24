@@ -112,11 +112,10 @@ public class MomentController extends BaseController {
                     String fileName = file.getOriginalFilename();
                     Date currData = new Date();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    String classPath = this.getClass().getClassLoader().getResource("").getPath();
-                    String projectPath = classPath.substring(0, classPath.length() - "lib/".length()) + "webapps/WEB-INF/data";
-                    String projectName = projectPath.substring(projectPath.lastIndexOf("/") + 1);
-                    String filePath = projectPath + "/moment/" + userId + "/" + sdf.format(currData);  //文件夹存放路径
-                    String relativePath = "/" + projectName + "/moment/" + userId + "/" + sdf.format(currData); //文件夹存放相对路径
+                    String projectPath = request.getServletContext().getRealPath("/");
+//                    String projectName = projectPath.substring(projectPath.lastIndexOf("/") + 1);
+                    String filePath = projectPath + "/images/moment/" + userId + "/" + sdf.format(currData);  //文件夹存放路径
+                    String relativePath = "/moment/" + userId + "/" + sdf.format(currData); //文件夹存放相对路径
                     //上传
                     try {
                         if (!FileUtil.isDirectory(filePath)) {
@@ -346,6 +345,7 @@ public class MomentController extends BaseController {
             Boolean isApproved = approveService.isApprove(approveQry);
 
             moment.setApproved(isApproved);
+            generateImageUrl(moment);
         }
 
         return returnCallback(true, resultMomentListVO, null);
@@ -517,4 +517,10 @@ public class MomentController extends BaseController {
     }
 
 
+    private void generateImageUrl(Moment moment) {
+        String pictures = moment.getPicture();
+        String prefix = "http://192.168.31.245:8080/images";
+        String urls = pictures.replace(",", "," + prefix);
+        moment.setPicture(prefix + urls);
+    }
 }
