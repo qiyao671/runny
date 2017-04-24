@@ -74,6 +74,8 @@ public class MomentMapperTest {
 
     @Test
     public void listUserMomentByUserId() throws Exception {
+        List<Moment> moments = momentMapper.listUserMomentByUserId(1);
+        assertNotNull(moments);
     }
 
     @Test

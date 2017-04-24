@@ -2,9 +2,11 @@ package com.wyq.study.dao;
 
 import com.wyq.study.pojo.Moment;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface MomentMapper {
     int deleteByPrimaryKey(Integer id);
 

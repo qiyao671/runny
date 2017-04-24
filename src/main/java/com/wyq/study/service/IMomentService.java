@@ -1,5 +1,6 @@
 package com.wyq.study.service;
 
+import com.github.pagehelper.PageInfo;
 import com.wyq.study.pojo.Moment;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public interface IMomentService {
 
     List<Moment> listFriendsMoment(Integer userId, Integer maxId, Integer minId, Integer pageSize);
 
-    List<Moment> listUserMomentByUserId(Integer userId);
+    PageInfo<Moment> listUserMomentByUserId(Integer userId, Integer num, Integer pageSize);
 
     List<Moment> listUserMoments(Moment momentQry);
 }

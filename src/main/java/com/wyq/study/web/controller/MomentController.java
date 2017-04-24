@@ -356,16 +356,25 @@ public class MomentController extends BaseController {
      */
     @RequestMapping(value = "/listSomeOneMoments", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback listSomeOneMoments(String token, Integer someOneId) {
+    public Callback listSomeOneMoments(String token, Integer someOneId,  Integer num, Integer pageSize) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
+        }
+        if (pageSize == null) {
+            return returnCallback(false, null, "您的分页参数有误");
+        }
+        if (num == null) {
+            num = 0;
+        }
+        if (someOneId == null) {
+            someOneId = userId;
         }
         User someOne = userService.getByUserId(someOneId);
         if (someOne == null) {
             return returnCallback(false, null, "找不到您要查看的用户!");
         }
-        List<Moment> momentList = momentService.listUserMomentByUserId(userId);
+        PageInfo<Moment> momentList = momentService.listUserMomentByUserId(userId, num, pageSize);
         return returnCallback(true, momentList, null);
     }
 

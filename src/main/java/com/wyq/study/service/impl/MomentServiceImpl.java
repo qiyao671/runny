@@ -1,7 +1,10 @@
 package com.wyq.study.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.wyq.study.dao.MomentMapper;
 import com.wyq.study.pojo.Moment;
+import com.wyq.study.pojo.RunnyLog;
 import com.wyq.study.service.IMomentService;
 import org.springframework.stereotype.Service;
 
@@ -66,8 +69,13 @@ public class MomentServiceImpl implements IMomentService {
     }
 
     @Override
-    public List<Moment> listUserMomentByUserId(Integer userId) {
-        return momentMapper.listUserMomentByUserId(userId);
+    public PageInfo<Moment> listUserMomentByUserId(Integer userId, Integer num, Integer pageSize) {
+        PageHelper.startPage(num, pageSize);
+        List<Moment> moments = momentMapper.listUserMomentByUserId(userId);
+        if (moments == null || moments.size() == 0) {
+            return null;
+        }
+        return new PageInfo<Moment>(moments);
     }
 
     @Override
