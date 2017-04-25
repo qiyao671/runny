@@ -1,9 +1,9 @@
 package com.wyq.study.web.controller;
 
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.wyq.study.constant.ApproveConsts;
 import com.wyq.study.constant.CommentConsts;
+import com.wyq.study.constant.FriendConsts;
 import com.wyq.study.constant.MomentConsts;
 import com.wyq.study.pojo.*;
 import com.wyq.study.service.IApproveService;
@@ -346,6 +346,9 @@ public class MomentController extends BaseController {
 
             moment.setApproved(isApproved);
             generateImageUrl(moment);
+
+            moment.getUser().setRelationStatus(FriendConsts.HAS_BEEN_FRIENDS);
+            moment.getUser().setProfile(getImageUrl(moment.getUser().getProfile()));
         }
 
         return returnCallback(true, resultMomentListVO, null);
@@ -365,7 +368,7 @@ public class MomentController extends BaseController {
             return returnCallback(false, null, "您的分页参数有误");
         }
         if (num == null) {
-            num = 0;
+            num = 1;
         }
         if (someOneId == null) {
             someOneId = userId;
@@ -374,9 +377,57 @@ public class MomentController extends BaseController {
         if (someOne == null) {
             return returnCallback(false, null, "找不到您要查看的用户!");
         }
-        PageInfo<Moment> momentList = momentService.listUserMomentByUserId(userId, num, pageSize);
+        PageInfo<Moment> momentList = momentService.listUserMomentByUserId(someOneId, num, pageSize);
+        for (Moment moment : momentList.getList()) {
+            Approve approveQry = new Approve();
+            approveQry.setMomentId(moment.getId());
+            approveQry.setUserId(userId);
+            approveQry.setStatus(MomentConsts.APPROVED);
+            Boolean isApproved = approveService.isApprove(approveQry);
+
+            moment.setApproved(isApproved);
+            generateImageUrl(moment);
+
+            moment.getUser().setProfile(getImageUrl(moment.getUser().getProfile()));
+        }
         return returnCallback(true, momentList, null);
     }
+
+    /**
+     * 查看某个人的动态
+     */
+    @RequestMapping(value = "/getMoment", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback getMoment(String token, Integer momentId) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback(false, null, "您还未登录，请您先登录!");
+        }
+        if (momentId == null) {
+            return returnCallback(false, null, "请指定要查看的动态id");
+        }
+        Moment moment = momentService.getMomentById(momentId);
+        if (moment == null) {
+            return returnCallback(false, null, "找不到你要查看的动态");
+        }
+
+        Approve approveQry = new Approve();
+        approveQry.setMomentId(moment.getId());
+        approveQry.setUserId(userId);
+        approveQry.setStatus(MomentConsts.APPROVED);
+        Boolean isApproved = approveService.isApprove(approveQry);
+
+        moment.setApproved(isApproved);
+        generateImageUrl(moment);
+
+        moment.getUser().setProfile(getImageUrl(moment.getUser().getProfile()));
+
+//        moment.getApproveList().forEach(approve -> approve.getUser().setProfile(getImageUrl(approve.getUser().getProfile())));
+//        moment.getCommentList().forEach(comment -> comment.getUser().setProfile(getImageUrl(comment.getUser().getProfile())));
+
+        return returnCallback(true, moment, null);
+    }
+
 
     /**
      * 朋友圈状态点赞(取消点赞) isApprove = true (false)
@@ -528,8 +579,16 @@ public class MomentController extends BaseController {
 
     private void generateImageUrl(Moment moment) {
         String pictures = moment.getPicture();
+        if (pictures == null || pictures.isEmpty()) {
+            return;
+        }
         String prefix = "http://192.168.31.245:8080/images";
         String urls = pictures.replace(",", "," + prefix);
         moment.setPicture(prefix + urls);
     }
+
+    private String getImageUrl(String imageName) {
+        return "http://192.168.31.245:8080/images" + imageName;
+    }
+
 }

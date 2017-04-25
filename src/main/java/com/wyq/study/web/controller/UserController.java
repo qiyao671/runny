@@ -140,6 +140,9 @@ public class UserController extends BaseController {
             if (userVO == null) {
                 return returnCallback(false, null, "用户信息获取失败！");
             }
+            if (userId == someOneId) {
+                userVO.setRelationStatus(FriendConsts.IS_MYSELF);
+            }
             userVO.setRelationStatus(friendService.getFriendRelationStatus(userId, someOneId));
         }
         userVO.setProfile(getImageUrl(userVO.getProfile()));
@@ -357,7 +360,7 @@ public class UserController extends BaseController {
         if (user == null) {
             return returnCallback(false, null, "找不到您要查找的用户!");
         }
-        //将当前上下文初始化给  CommonsMutipartResolver （多部分解析器）
+        //将当前上下文初始化给  CommonsMultipartResolver （多部分解析器）
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
         //检查form中是否有enctype="multipart/form-data"
         if (multipartResolver.isMultipart(request)) {

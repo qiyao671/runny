@@ -9,6 +9,7 @@ import com.wyq.study.service.IMomentService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,6 +64,7 @@ public class MomentServiceImpl implements IMomentService {
         return momentMapper.listMoreMoments(momentQry);
     }
 
+
     @Override
     public List<Moment> listFriendsMoment(Integer userId, Integer maxId, Integer minId, Integer pageSize) {
         return momentMapper.listFriendsMoment(userId, maxId, minId, pageSize);
@@ -73,7 +75,7 @@ public class MomentServiceImpl implements IMomentService {
         PageHelper.startPage(num, pageSize);
         List<Moment> moments = momentMapper.listUserMomentByUserId(userId);
         if (moments == null || moments.size() == 0) {
-            return null;
+            return new PageInfo<Moment>(new ArrayList<Moment>());
         }
         return new PageInfo<Moment>(moments);
     }

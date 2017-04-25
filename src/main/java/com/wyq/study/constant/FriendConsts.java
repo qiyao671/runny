@@ -11,7 +11,7 @@ package com.wyq.study.constant;
  **/
 public class FriendConsts {
     //添加好友
-    public final static int ADD_FRIENDS = 0;
+    public final static int ADD_FRIENDS = 4;
 
     //已经成为好友
     public final static int HAS_BEEN_FRIENDS = 1;
