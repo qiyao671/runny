@@ -1,7 +1,8 @@
 package com.wyq.study.utils;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * AppSession工具
@@ -14,7 +15,7 @@ import org.apache.log4j.Logger;
  **/
 
 public class AppSessionHelper {
-    private static Logger logger = Logger.getLogger(AppSessionHelper.class);
+    private static Logger logger = LoggerFactory.getLogger(AppSessionHelper.class);
     public static final String SESSION_KEY = "WE2323@#$$$@&*FDGZfgfgf$%^$%*&*123FGeer*0!c2pY";
 
     /**

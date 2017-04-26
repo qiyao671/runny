@@ -168,16 +168,17 @@ public class RunnyLogController extends BaseController {
     }
 
     /**
-     * 本月好友榜单
+     * 好友榜单
      *
      * @param token
      * @param num
      * @param pageSize
+     * @param flag 2,3,4(月，周，日）
      * @return
      */
-    @RequestMapping(value = "/listMonthRank", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/listFriendsRank", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback listMonthRank(String token, Integer num, Integer pageSize) {
+    public Callback listFriendsRank(String token, Integer num, Integer pageSize, Integer flag) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
@@ -185,59 +186,29 @@ public class RunnyLogController extends BaseController {
         if (num == null || pageSize == null) {
             return returnCallback(false, null, "您的分页参数有误");
         }
-        Date beginMonth = DateUtils.monthStartTime(new Date());
-        Date endMonth = DateUtils.monthEndTime(new Date());
-        PageInfo pageInfo = runnyLogService.listTimeRank(userId, num, pageSize, beginMonth, endMonth);
-        return returnCallback(true, pageInfo, null);
-    }
-
-    /**
-     * 本周好友榜单
-     *
-     * @param token
-     * @param num
-     * @param pageSize
-     * @return
-     */
-    @RequestMapping(value = "/listWeekRank", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Callback listWeekRank(String token, Integer num, Integer pageSize) {
-        Integer userId = AppSessionHelper.getAppUserId(token);
-        if (userId == null) {
-            return returnCallback(false, null, "您还未登录，请您先登录!");
+        if (flag == null) {
+            return returnCallback(false, null, "参数错误");
         }
-        if (num == null || pageSize == null) {
-            return returnCallback(false, null, "您的分页参数有误");
+        Date begin;
+        Date end;
+        switch (flag) {
+            case 2:
+                begin = DateUtils.monthStartTime(new Date());
+                end = DateUtils.monthEndTime(new Date());
+                break;
+            case 3:
+                begin = DateUtils.weekStartTime(new Date());
+                end = DateUtils.weekEndTime(new Date());
+                break;
+            case 4:
+                begin = DateUtil.beginOfDay(new Date());
+                end = DateUtil.endOfDay(new Date());
+                break;
+            default:
+                return returnCallback(false, null, "参数错误");
         }
-        Date beginWeek = DateUtils.weekStartTime(new Date());
-        Date endWeek = DateUtils.weekEndTime(new Date());
-        PageInfo pageInfo = runnyLogService.listTimeRank(userId, num, pageSize, beginWeek, endWeek);
 
-        return returnCallback(true, pageInfo, null);
-    }
-
-    /**
-     * 今日好友榜单
-     *
-     * @param token
-     * @param num
-     * @param pageSize
-     * @return
-     */
-    @RequestMapping(value = "/listDayRank", method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public Callback listDayRank(String token, Integer num, Integer pageSize) {
-        Integer userId = AppSessionHelper.getAppUserId(token);
-        if (userId == null) {
-            return returnCallback(false, null, "您还未登录，请您先登录!");
-        }
-        if (num == null || pageSize == null) {
-            return returnCallback(false, null, "您的分页参数有误");
-        }
-        Date beginDay = DateUtil.beginOfDay(new Date());
-        Date endDay = DateUtil.endOfDay(new Date());
-        PageInfo pageInfo = runnyLogService.listTimeRank(userId, num, pageSize, beginDay, endDay);
-
+        PageInfo pageInfo = runnyLogService.listTimeRank(userId, num, pageSize, begin, end);
         return returnCallback(true, pageInfo, null);
     }
 
