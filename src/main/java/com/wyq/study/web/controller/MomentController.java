@@ -394,7 +394,7 @@ public class MomentController extends BaseController {
     }
 
     /**
-     * 查看某个人的动态
+     * 查看动态详情
      */
     @RequestMapping(value = "/getMoment", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
@@ -420,10 +420,15 @@ public class MomentController extends BaseController {
         moment.setApproved(isApproved);
         generateImageUrl(moment);
 
-        moment.getUser().setProfile(getImageUrl(moment.getUser().getProfile()));
-
-//        moment.getApproveList().forEach(approve -> approve.getUser().setProfile(getImageUrl(approve.getUser().getProfile())));
-//        moment.getCommentList().forEach(comment -> comment.getUser().setProfile(getImageUrl(comment.getUser().getProfile())));
+        if (moment.getUser() != null && moment.getUser().getProfile() != null && !moment.getUser().getProfile().isEmpty()) {
+            moment.getUser().setProfile(getImageUrl(moment.getUser().getProfile()));
+        }
+        if (moment.getApproveList() != null) {
+            moment.getApproveList().forEach(approve -> approve.getUser().setProfile(getImageUrl(approve.getUser().getProfile())));
+        }
+        if (moment.getCommentList() != null) {
+            moment.getCommentList().forEach(comment -> comment.getUser().setProfile(getImageUrl(comment.getUser().getProfile())));
+        }
 
         return returnCallback(true, moment, null);
     }

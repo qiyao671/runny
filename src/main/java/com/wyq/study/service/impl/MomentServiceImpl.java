@@ -33,7 +33,7 @@ public class MomentServiceImpl implements IMomentService {
 
     @Override
     public Moment getMomentById(Integer momentId) {
-        return momentMapper.selectByPrimaryKey(momentId);
+        return momentMapper.selectMomentByPrimaryKey(momentId);
     }
 
     @Override
