@@ -229,33 +229,8 @@ public class RunnyLogController extends BaseController {
         if (runnyLog == null) {
             return returnCallback(false, null, "您还未跑步!");
         }
-        runnyLog.setCreateTime(new Date());
-        runnyLog.setUserId(userId);
-        int logId = runnyLogService.saveRunnyLog(runnyLog);
 
-        List<JSONArray> altitudesList = runnyLog.getAltitudeLists();
-        if (altitudesList != null) {
-            for (int i = 0; i < altitudesList.size(); i++) {
-                RunnyAltitude runnyAltitude = new RunnyAltitude();
-                runnyAltitude.setLogId(logId);
-                runnyAltitude.setAltitudes(altitudesList.get(i).toJSONString());
-                runnyAltitude.setGmtCreate(new Date());
-                runnyAltitude.setSerial(i);
-                runnyAltitudeService.saveRunnyAltitude(runnyAltitude);
-            }
-        }
-
-        List<JSONArray> tracks = runnyLog.getTracks();
-        if (tracks != null) {
-            for (int i = 0; i < tracks.size(); i++) {
-                RunnyTrack runnyTrack = new RunnyTrack();
-                runnyTrack.setLogId(logId);
-                runnyTrack.setTrack(tracks.get(i).toJSONString());
-                runnyTrack.setGmtCreate(new Date());
-                runnyTrack.setSerial(i);
-                runnyTrackService.saveRunnyTrack(runnyTrack);
-            }
-        }
+        saveLog(runnyLog, userId);
 
         return returnCallback(true, "记录成功！", null);
     }
@@ -323,5 +298,50 @@ public class RunnyLogController extends BaseController {
         }
         List<JSONArray> runnyTracks = runnyTrackService.getRunnyTracks(logId);
         return returnCallback(true, runnyTracks, null);
+    }
+
+    @RequestMapping(value = "saveRunnyLogList", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public Callback saveRunnyLogList(String token, List<RunnyLog> runnyLogs) {
+        Integer userId = AppSessionHelper.getAppUserId(token);
+        if (userId == null) {
+            return returnCallback(false, null, "您还未登录，请您先登录!");
+        }
+        if (runnyLogs == null) {
+            return returnCallback(false, null, "参数错误");
+        }
+        runnyLogs.forEach(runnyLog -> saveLog(runnyLog, userId));
+        return returnCallback(true, "之前未上传成功的跑步记录已成功上传！", null);
+
+    }
+
+    private void saveLog(RunnyLog runnyLog, Integer userId) {
+        runnyLog.setCreateTime(new Date());
+        runnyLog.setUserId(userId);
+        int logId = runnyLogService.saveRunnyLog(runnyLog);
+
+        List<JSONArray> altitudesList = runnyLog.getAltitudeLists();
+        if (altitudesList != null) {
+            for (int i = 0; i < altitudesList.size(); i++) {
+                RunnyAltitude runnyAltitude = new RunnyAltitude();
+                runnyAltitude.setLogId(logId);
+                runnyAltitude.setAltitudes(altitudesList.get(i).toJSONString());
+                runnyAltitude.setGmtCreate(new Date());
+                runnyAltitude.setSerial(i);
+                runnyAltitudeService.saveRunnyAltitude(runnyAltitude);
+            }
+        }
+
+        List<JSONArray> tracks = runnyLog.getTracks();
+        if (tracks != null) {
+            for (int i = 0; i < tracks.size(); i++) {
+                RunnyTrack runnyTrack = new RunnyTrack();
+                runnyTrack.setLogId(logId);
+                runnyTrack.setTrack(tracks.get(i).toJSONString());
+                runnyTrack.setGmtCreate(new Date());
+                runnyTrack.setSerial(i);
+                runnyTrackService.saveRunnyTrack(runnyTrack);
+            }
+        }
     }
 }
