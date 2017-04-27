@@ -11,6 +11,7 @@ import com.wyq.study.service.ICommentService;
 import com.wyq.study.service.IMomentService;
 import com.wyq.study.service.IUserService;
 import com.wyq.study.utils.AppSessionHelper;
+import com.wyq.study.utils.RunnyUtils;
 import com.xiaoleilu.hutool.io.FileUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -348,7 +349,7 @@ public class MomentController extends BaseController {
             generateImageUrl(moment);
 
             moment.getUser().setRelationStatus(FriendConsts.HAS_BEEN_FRIENDS);
-            moment.getUser().setProfile(getImageUrl(moment.getUser().getProfile()));
+            moment.getUser().setProfile(RunnyUtils.getImageUrl(moment.getUser().getProfile()));
         }
 
         return returnCallback(true, resultMomentListVO, null);
@@ -388,7 +389,7 @@ public class MomentController extends BaseController {
             moment.setApproved(isApproved);
             generateImageUrl(moment);
 
-            moment.getUser().setProfile(getImageUrl(moment.getUser().getProfile()));
+            moment.getUser().setProfile(RunnyUtils.getImageUrl(moment.getUser().getProfile()));
         }
         return returnCallback(true, momentList, null);
     }
@@ -421,13 +422,13 @@ public class MomentController extends BaseController {
         generateImageUrl(moment);
 
         if (moment.getUser() != null && moment.getUser().getProfile() != null && !moment.getUser().getProfile().isEmpty()) {
-            moment.getUser().setProfile(getImageUrl(moment.getUser().getProfile()));
+            moment.getUser().setProfile(RunnyUtils.getImageUrl(moment.getUser().getProfile()));
         }
         if (moment.getApproveList() != null) {
-            moment.getApproveList().forEach(approve -> approve.getUser().setProfile(getImageUrl(approve.getUser().getProfile())));
+            moment.getApproveList().forEach(approve -> approve.getUser().setProfile(RunnyUtils.getImageUrl(approve.getUser().getProfile())));
         }
         if (moment.getCommentList() != null) {
-            moment.getCommentList().forEach(comment -> comment.getUser().setProfile(getImageUrl(comment.getUser().getProfile())));
+            moment.getCommentList().forEach(comment -> comment.getUser().setProfile(RunnyUtils.getImageUrl(comment.getUser().getProfile())));
         }
 
         return returnCallback(true, moment, null);
@@ -591,9 +592,4 @@ public class MomentController extends BaseController {
         String urls = pictures.replace(",", "," + prefix);
         moment.setPicture(prefix + urls);
     }
-
-    private String getImageUrl(String imageName) {
-        return "http://192.168.31.245:8080/images" + imageName;
-    }
-
 }

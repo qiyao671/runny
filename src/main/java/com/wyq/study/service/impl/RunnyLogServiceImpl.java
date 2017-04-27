@@ -8,11 +8,13 @@ import com.wyq.study.service.IRunnyAltitudeService;
 import com.wyq.study.service.IRunnyLogService;
 import com.wyq.study.service.IRunnyTrackService;
 import com.wyq.study.utils.DateUtils;
+import com.wyq.study.utils.RunnyUtils;
 import com.xiaoleilu.hutool.date.DateUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -115,8 +117,9 @@ public class RunnyLogServiceImpl implements IRunnyLogService {
         runnyLogDTO.setEndTime(endTime);
         List<RunnyLog> timeRankList = runnyLogMapper.listTimeRank(runnyLogDTO);
         if (timeRankList == null || timeRankList.size() == 0) {
-            return null;
+            return new PageInfo(new ArrayList<RunnyLog>());
         }
+        timeRankList.forEach(runnyLog -> runnyLog.getUser().setProfile(RunnyUtils.getImageUrl(runnyLog.getUser().getProfile())));
         PageInfo pageInfo = new PageInfo(timeRankList);
         return pageInfo;
     }

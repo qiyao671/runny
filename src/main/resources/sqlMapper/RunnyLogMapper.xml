@@ -12,7 +12,16 @@
         <result column="moment_content" property="momentContent" jdbcType="VARCHAR"/>
         <result column="start_run_time" property="startRunTime" jdbcType="TIMESTAMP"/>
     </resultMap>
-    <resultMap id="resultMapWithUser" extends="BaseResultMap" type="com.wyq.study.pojo.RunnyLog">
+    <resultMap id="userResultMap" type="com.wyq.study.pojo.User">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="username" property="username"/>
+        <result column="profile" property="profile"/>
+    </resultMap>
+    <resultMap id="resultMapWithUser" type="com.wyq.study.pojo.RunnyLog">
+        <id column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="totalDistance" property="totalDistance" jdbcType="DOUBLE" />
+        <result column="totalSpendTime" property="totalSpendTime" jdbcType="BIGINT" />
+        <result column="totalEnergy" property="totalEnergy" jdbcType="DOUBLE" />
         <association property="user" columnPrefix="user_" javaType="com.wyq.study.pojo.User" resultMap="userResultMap"/>
     </resultMap>
     <sql id="Base_Column_List">
@@ -87,19 +96,17 @@
         order by totalDistance DESC
     </select>
     <select id="listTimeRank" resultMap="resultMapWithUser" parameterType="com.wyq.study.pojo.RunnyLog">
-        SELECT l.*, u.username as user_username, u.profile as user_profile
-         FROM (SELECT
-                user_id, sum(distance) as totalDistance,sum(spend_time) as totalSpendTime,sum(energy) as totalEnergy,count(id) as totalCount
-                from runny_log
-                where create_time BETWEEN #{beginTime,jdbcType=TIMESTAMP} AND #{endTime,jdbcType=TIMESTAMP}
-                AND (
-                 user_id in (SELECT user_id from friend  WHERE friend_id = #{userId,jdbcType=INTEGER} AND status = 1)
-                 OR user_id in (SELECT friend_id from friend  WHERE user_id = #{userId,jdbcType=INTEGER} AND status = 1)
-                 OR user_id = #{userId,jdbcType=INTEGER}
-                )
-                group by user_id
-                order by totalDistance DESC) AS l
-        LEFT OUTER JOIN user u ON user_id = u.id
+        SELECT u.*, l.*
+FROM (SELECT user.username as user_username, user.profile as user_profile, user.id as user_id
+FROM user
+WHERE id in (SELECT user_id from friend  WHERE friend_id = #{userId,jdbcType=INTEGER} AND status = 1)
+OR id in (SELECT friend_id from friend  WHERE user_id = #{userId,jdbcType=INTEGER} AND status = 1)
+OR id = #{userId,jdbcType=INTEGER}) as u
+LEFT OUTER JOIN (SELECT user_id, sum(distance) as totalDistance,sum(spend_time) as totalSpendTime,sum(energy) as totalEnergy,count(id) as totalCount
+FROM runny_log
+where create_time BETWEEN #{beginTime,jdbcType=TIMESTAMP} AND #{endTime,jdbcType=TIMESTAMP}
+group by user_id) l ON u.user_id = l.user_id
+order by totalDistance DESC
     </select>
     <select id="listMyAllRunnyLogs" resultMap="BaseResultMap" parameterType="com.wyq.study.pojo.RunnyLog">
         SELECT

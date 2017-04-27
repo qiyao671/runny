@@ -56,6 +56,8 @@ public class RunnyLog {
 
     private List<Integer> userIds;
 
+    private User user;
+
     public Integer getId() {
         return id;
     }
@@ -230,5 +232,13 @@ public class RunnyLog {
 
     public void setAltitudeLists(List<JSONArray> altitudeLists) {
         this.altitudeLists = altitudeLists;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -9,6 +9,7 @@ import com.wyq.study.service.IUserService;
 import com.wyq.study.utils.AppSessionHelper;
 import com.wyq.study.utils.DateUtils;
 import com.wyq.study.utils.MD5;
+import com.wyq.study.utils.RunnyUtils;
 import com.xiaoleilu.hutool.io.FileUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -145,7 +146,7 @@ public class UserController extends BaseController {
             }
             userVO.setRelationStatus(friendService.getFriendRelationStatus(userId, someOneId));
         }
-        userVO.setProfile(getImageUrl(userVO.getProfile()));
+        userVO.setProfile(RunnyUtils.getImageUrl(userVO.getProfile()));
 
         return returnCallback(true, userVO, null);
     }
@@ -194,7 +195,7 @@ public class UserController extends BaseController {
         List<User> userList = friendService.listFriends(userId);
         for (User user : userList) {
             user.setRelationStatus(FriendConsts.HAS_BEEN_FRIENDS);
-            user.setProfile(getImageUrl(user.getProfile()));
+            user.setProfile(RunnyUtils.getImageUrl(user.getProfile()));
         }
 
         return returnCallback(true, userList, null);
@@ -339,7 +340,7 @@ public class UserController extends BaseController {
         } else {
             for (User user : userVOList) {
                 user.setRelationStatus(friendService.getFriendRelationStatus(userId, user.getId()));
-                user.setProfile(getImageUrl(user.getProfile()));
+                user.setProfile(RunnyUtils.getImageUrl(user.getProfile()));
             }
         }
 
@@ -412,13 +413,9 @@ public class UserController extends BaseController {
         List<User> userList = friendService.listFriendsAndRequest(userId);
         for (User user : userList) {
             user.setRelationStatus(friendService.getFriendRelationStatus(userId, user.getId()));
-            user.setProfile(getImageUrl(user.getProfile()));
+            user.setProfile(RunnyUtils.getImageUrl(user.getProfile()));
         }
 
         return returnCallback(true, userList, null);
-    }
-
-    private String getImageUrl(String imageName) {
-        return "http://192.168.31.245:8080/images" + imageName;
     }
 }
