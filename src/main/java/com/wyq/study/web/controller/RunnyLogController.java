@@ -3,13 +3,11 @@ package com.wyq.study.web.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
-import com.wyq.study.pojo.Callback;
-import com.wyq.study.pojo.RunnyAltitude;
-import com.wyq.study.pojo.RunnyLog;
-import com.wyq.study.pojo.RunnyTrack;
+import com.wyq.study.pojo.*;
 import com.wyq.study.service.IRunnyAltitudeService;
 import com.wyq.study.service.IRunnyLogService;
 import com.wyq.study.service.IRunnyTrackService;
+import com.wyq.study.service.IUserService;
 import com.wyq.study.utils.AppSessionHelper;
 import com.wyq.study.utils.DateUtils;
 import com.xiaoleilu.hutool.date.DateUtil;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -48,6 +47,9 @@ public class RunnyLogController extends BaseController {
 
     @Autowired
     private IRunnyAltitudeService runnyAltitudeService;
+
+    @Autowired
+    private IUserService userService;
 
     /**
      * 用户 累计总跑步记录 月累计跑步记录 周累计跑步记录
@@ -102,14 +104,17 @@ public class RunnyLogController extends BaseController {
      */
     @RequestMapping(value = "/getBestRunningLogInfo", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback getBestRunningLogInfo(String token) {
+    public Callback getBestRunningLogInfo(String token, Integer someoneId) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
         }
+        if (someoneId == null) {
+            someoneId = userId;
+        }
         JSONObject bestLogInfo = new JSONObject();
         RunnyLog runnyLog = new RunnyLog();
-        runnyLog.setUserId(userId);
+        runnyLog.setUserId(someoneId);
         //五公里最快
         runnyLog.setMinDistance(FIVE_KM);
         runnyLog.setMaxDistance(TEN_KM);
@@ -130,16 +135,16 @@ public class RunnyLogController extends BaseController {
         RunnyLog fullMaRunLogVO = runnyLogService.getPersonalLogInfo(runnyLog);
         bestLogInfo.put("fullMaPB", fullMaRunLogVO);
         //最远距离
-        RunnyLog farthestRunLogVO = runnyLogService.getFarthestLogInfo(userId);
+        RunnyLog farthestRunLogVO = runnyLogService.getFarthestLogInfo(someoneId);
         bestLogInfo.put("farthestLogInfo", farthestRunLogVO);
         //最长时间
-        RunnyLog longestRunLogVO = runnyLogService.getLongestLogInfo(userId);
+        RunnyLog longestRunLogVO = runnyLogService.getLongestLogInfo(someoneId);
         bestLogInfo.put("longestRunLogVO", longestRunLogVO);
         //最快速度
-        RunnyLog fastRunLogVO = runnyLogService.getFastLogInfo(userId);
+        RunnyLog fastRunLogVO = runnyLogService.getFastLogInfo(someoneId);
         bestLogInfo.put("fastSpeed", fastRunLogVO);
         //最快配速 --这个怎么计算勒
-        RunnyLog fastAveLogVO = runnyLogService.getFastPaceLog(userId);
+        RunnyLog fastAveLogVO = runnyLogService.getFastPaceLog(someoneId);
         bestLogInfo.put("fastAveLogVO", fastAveLogVO);
 
         return returnCallback(true, bestLogInfo, null);
@@ -229,8 +234,12 @@ public class RunnyLogController extends BaseController {
         if (runnyLog == null) {
             return returnCallback(false, null, "您还未跑步!");
         }
+        User user = userService.getByUserId(userId);
+        if (user == null) {
+            return returnCallback(false, null, "找不到该用户");
+        }
 
-        saveLog(runnyLog, userId);
+        saveLog(runnyLog, user);
 
         return returnCallback(true, "记录成功！", null);
     }
@@ -302,7 +311,7 @@ public class RunnyLogController extends BaseController {
 
     @RequestMapping(value = "saveRunnyLogList", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public Callback saveRunnyLogList(String token, List<RunnyLog> runnyLogs) {
+    public Callback saveRunnyLogList(String token, @RequestBody ArrayList<RunnyLog> runnyLogs) {
         Integer userId = AppSessionHelper.getAppUserId(token);
         if (userId == null) {
             return returnCallback(false, null, "您还未登录，请您先登录!");
@@ -310,14 +319,21 @@ public class RunnyLogController extends BaseController {
         if (runnyLogs == null) {
             return returnCallback(false, null, "参数错误");
         }
-        runnyLogs.forEach(runnyLog -> saveLog(runnyLog, userId));
+        User user = userService.getByUserId(userId);
+        if (user == null) {
+            return returnCallback(false, null, "找不到该用户");
+        }
+        runnyLogs.forEach(runnyLog -> saveLog(runnyLog, user));
         return returnCallback(true, "之前未上传成功的跑步记录已成功上传！", null);
 
     }
 
-    private void saveLog(RunnyLog runnyLog, Integer userId) {
+    private void saveLog(RunnyLog runnyLog, User user) {
         runnyLog.setCreateTime(new Date());
-        runnyLog.setUserId(userId);
+        runnyLog.setUserId(user.getId());
+        if (user.getWeight() != null) {
+            runnyLog.setEnergy(user.getWeight() * runnyLog.getDistance() * 1.036);
+        }
         int logId = runnyLogService.saveRunnyLog(runnyLog);
 
         List<JSONArray> altitudesList = runnyLog.getAltitudeLists();

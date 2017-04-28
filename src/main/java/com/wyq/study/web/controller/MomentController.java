@@ -454,19 +454,29 @@ public class MomentController extends BaseController {
         if (moment == null) {
             return returnCallback(false, null, "找不到您要点赞的动态!");
         }
-        //点赞
-        if (isApprove) {
-            Approve approve = new Approve();
-            approve.setGmtCreate(new Date());
-            approve.setUserId(userId);
-            approve.setMomentId(momentId);
-            approve.setStatus(ApproveConsts.NORMAL_MODEL);
-            approveService.saveApprove(approve);
-            return returnCallback(true, "点赞成功!", null);
+        Approve approve = new Approve();
+        approve.setUserId(userId);
+        approve.setMomentId(momentId);
+        approve.setStatus(ApproveConsts.NORMAL_MODEL);
+        if (approveService.isApprove(approve)) {
+            if (isApprove) {
+                return returnCallback(true, "点赞成功!", null);
+            } else {
+                //取消点赞
+                approveService.deleteApprove(userId, momentId);
+                return returnCallback(true, "成功取消点赞!", null);
+            }
+        } else {
+            if (isApprove) {
+                //点赞
+                approve.setGmtCreate(new Date());
+                approveService.saveApprove(approve);
+                return returnCallback(true, "点赞成功!", null);
+            } else {
+                return returnCallback(true, "成功取消点赞!", null);
+            }
         }
-        //取消点赞
-        approveService.deleteApprove(userId, momentId);
-        return returnCallback(true, "成功取消点赞!", null);
+
     }
 
     /**
